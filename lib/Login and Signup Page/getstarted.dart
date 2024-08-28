@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:luxelayers/Login%20and%20Signup%20Page/loginpage.dart';
+import 'package:luxelayers/Login%20and%20Signup%20Page/signuppage.dart';
 
 class GetStartedPage extends StatefulWidget {
   const GetStartedPage({super.key});
@@ -46,7 +47,7 @@ class _GetStartedPageState extends State<GetStartedPage> {
                     children: [
                       ElevatedButton(
                           onPressed: () {
-
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => SignUp(),));
                           },
                           child: Text(
                             'Join Us',
