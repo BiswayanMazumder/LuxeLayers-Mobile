@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:luxelayers/Logged%20In%20Page/homepage.dart';
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
@@ -151,6 +152,7 @@ class _LoginPageState extends State<LoginPage> {
                 try{
                   await _auth.signInWithEmailAndPassword(email: _emailController.text,
                       password: _passwordController.text);
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage(),));
                 }catch(e){
                   if (kDebugMode) {
                     print(e);

@@ -1,8 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:luxelayers/Logged%20In%20Page/homepage.dart';
+import 'package:luxelayers/Login%20and%20Signup%20Page/getstarted.dart';
 class SignUp extends StatefulWidget {
   const SignUp({super.key});
 
@@ -14,6 +17,26 @@ class _LoginPageState extends State<SignUp> {
   final TextEditingController _emailController=TextEditingController();
   final TextEditingController _passwordController=TextEditingController();
   final TextEditingController _nameController=TextEditingController();
+  final FirebaseFirestore _firestore=FirebaseFirestore.instance;
+  Future<void> signupuser() async{
+    try{
+      await _auth.createUserWithEmailAndPassword(email: _emailController.text,
+          password: _passwordController.text);
+      final user=_auth.currentUser;
+      await user!.sendEmailVerification();
+      await _firestore.collection('User Detail').doc(user!.uid).set({
+        'Name':_nameController.text,
+        'Email':_emailController.text,
+        'Password':_passwordController.text,
+        'DoJ':FieldValue.serverTimestamp(),
+      });
+      Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage(),));
+    }catch(e){
+      if (kDebugMode) {
+        print(e);
+      }
+    }
+  }
   bool showpw=false;
   final FirebaseAuth _auth=FirebaseAuth.instance;
   @override
@@ -141,13 +164,8 @@ class _LoginPageState extends State<SignUp> {
             ),
             InkWell(
               onTap: ()async{
-                try{
-                  await _auth.signInWithEmailAndPassword(email: _emailController.text,
-                      password: _passwordController.text);
-                }catch(e){
-                  if (kDebugMode) {
-                    print(e);
-                  }
+                if(_nameController!=null && _emailController!=null && _passwordController!=null){
+                  await signupuser();
                 }
               },
               child: Container(
