@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "293993080821",
+    "project_id": "luxelayers",
+    "storage_bucket": "luxelayers.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:293993080821:android:eb557b280cdcd0740922bc",
+        "android_client_info": {
+          "package_name": "com.example.luxelayers"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD41NyARs3bbdag0NQBQE6BTqmO08c52jI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
