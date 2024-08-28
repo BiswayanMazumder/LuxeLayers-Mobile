@@ -2,7 +2,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:luxelayers/Login%20and%20Signup%20Page/loginpage.dart';
+import 'package:luxelayers/Login%20and%20Signup%20Page/getstarted.dart';
 import 'package:luxelayers/firebase_options.dart';
 void main()async{
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
     return  const MaterialApp(
       title: "LuxeLayers",
       debugShowCheckedModeBanner: false,
-      home: LoginPage(),
+      home: GetStartedPage(),
 
     );
   }
