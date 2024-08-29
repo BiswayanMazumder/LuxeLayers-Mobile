@@ -19,6 +19,8 @@ class _HomePageState extends State<HomePage> {
   ];
   List<String> categories = ['All', 'Air Jordan', 'Slides', 'Dunk'];
 
+  int _selectedIndex = 0; // Track the selected index
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,8 +28,8 @@ class _HomePageState extends State<HomePage> {
         automaticallyImplyLeading: false,
         title: Text(
           'Discover',
-          style: GoogleFonts.nunitoSans(
-              fontWeight: FontWeight.w700, fontSize: 20),
+          style:
+              GoogleFonts.nunitoSans(fontWeight: FontWeight.w700, fontSize: 20),
         ),
         actions: [
           Padding(
@@ -48,7 +50,8 @@ class _HomePageState extends State<HomePage> {
       ),
       body: SingleChildScrollView(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start, // Align items to the start
+          crossAxisAlignment:
+              CrossAxisAlignment.start, // Align items to the start
           children: [
             const SizedBox(height: 30),
             Center(
@@ -110,14 +113,16 @@ class _HomePageState extends State<HomePage> {
                       'See All',
                       style: GoogleFonts.nunitoSans(
                           color: Colors.green,
-                          fontWeight: FontWeight.w700, fontSize: 15),
+                          fontWeight: FontWeight.w700,
+                          fontSize: 15),
                     ),
                   ),
                 ],
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 5.0), // Add 30px space from left
+              padding:
+                  const EdgeInsets.only(left: 5.0), // Add 30px space from left
               child: SizedBox(
                 height: 50, // Adjust the height as needed
                 child: ListView.builder(
@@ -126,24 +131,37 @@ class _HomePageState extends State<HomePage> {
                   itemBuilder: (context, index) {
                     return Padding(
                       padding: const EdgeInsets.only(left: 20.0),
-                      child: Container(
-                        height: 20,
-                        width: 80,
-                        decoration: BoxDecoration(
-                          color: index==0?Colors.green:Colors.transparent,
-                          borderRadius: const BorderRadius.all(Radius.circular(10)),
-                          border: Border.all(color:index==0?Colors.green: Colors.black)
-                        ),
-                        child: Center(
-                          child: Text(
-                            categories[index],
-                            style: GoogleFonts.nunitoSans(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
+                      child: InkWell(
+                        onTap: () {
+                          setState(() {
+                            _selectedIndex = index; // Update the selected index
+                          });
+                        },
+                        child: Container(
+                          height: 20,
+                          width: 80,
+                          decoration: BoxDecoration(
+                            color: _selectedIndex == index
+                                ? Colors.green
+                                : Colors.transparent,
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(10)),
+                            border: Border.all(
+                                color: _selectedIndex == index
+                                    ? Colors.green
+                                    : Colors.black),
+                          ),
+                          child: Center(
+                            child: Text(
+                              categories[index],
+                              style: GoogleFonts.nunitoSans(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                              ),
                             ),
                           ),
                         ),
-                      )
+                      ),
                     );
                   },
                 ),
