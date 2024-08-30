@@ -127,7 +127,6 @@ class _JordanPageState extends State<JordanPage> {
                   sneakername[index],
                   style: GoogleFonts.nunitoSans(
                     fontSize: 12.0, // Adjust font size if needed
-
                   ),
                   maxLines: 2, // Limit text to 2 lines
                 ),

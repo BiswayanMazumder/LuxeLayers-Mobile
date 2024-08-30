@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:luxelayers/Sneakers%20Category/Slides.dart';
+import 'package:luxelayers/Sneakers%20Category/dunks.dart';
 import 'package:luxelayers/Sneakers%20Category/jordan.dart';
 
 class HomePage extends StatefulWidget {
@@ -18,7 +20,7 @@ class _HomePageState extends State<HomePage> {
     'https://images.vegnonveg.com/media/collections/101/17198391211016682a991ee9b7.png',
     // Add more image URLs here
   ];
-  List<String> categories = ['All', 'Air Jordan', 'Slides', 'Dunk'];
+  List<String> categories = ['All', 'Air Jordan', 'Slides', 'Dunks','Air Max','Air Force'];
   List<String> sneakerimages = [
     "https://images.vegnonveg.com/resized/400X328/11473/air-max-90-drift-action-greenblack-summit-white-green-66c6f5a6b95b7.jpg",
     "https://images.vegnonveg.com/resized/400X328/11421/air-max-1-whitelight-army-neutral-grey-black-white-66b47248b5e8d.jpg",
@@ -156,6 +158,39 @@ class _HomePageState extends State<HomePage> {
     "https://images.vegnonveg.com/resized/400X328/11408/dunk-low-game-royalblack-white-multicolor-66b4784782d8e.jpg",
     "https://images.vegnonveg.com/resized/400X328/11397/dunk-low-retro-whitedragon-red-black-white-66b3667e7b69f.jpg"
   ];
+  List<String> airmax=[
+    "https://images.vegnonveg.com/resized/400X328/11473/air-max-90-drift-action-greenblack-summit-white-green-66c6f5a6b95b7.jpg",
+    "https://images.vegnonveg.com/resized/400X328/11421/air-max-1-whitelight-army-neutral-grey-black-white-66b47248b5e8d.jpg",
+    "https://images.vegnonveg.com/resized/400X328/11421/air-max-1-whitelight-army-neutral-grey-black-white-66b4724907e18.jpg",
+    "https://images.vegnonveg.com/resized/400X328/11420/air-max-90-whitekhaki-cyber-dark-smoke-grey-white-66b4720bd006d.jpg",
+    "https://images.vegnonveg.com/resized/400X328/11420/air-max-90-whitekhaki-cyber-dark-smoke-grey-white-66b4720c2227d.jpg",
+    "https://images.vegnonveg.com/resized/400X328/11405/air-max-plus-premium-black-teablack-petra-brown-olive-grey-black-66b478d3d7fd6.jpg",
+    "https://images.vegnonveg.com/resized/400X328/11404/air-max-1-essential-premium-neutral-oliveblack-cargo-khaki-green-66b495cfd64d0.jpg",
+    "https://images.vegnonveg.com/resized/400X328/11402/air-max-1-essential-whiteblack-summit-white-white-66b4760314a84.jpg",
+    "https://images.vegnonveg.com/resized/400X328/11402/air-max-1-essential-whiteblack-summit-white-white-66b47603619dc.jpg",
+    "https://images.vegnonveg.com/resized/400X328/11388/air-max-sndr-hyper-pinkblack-white-pink-66b0bb285d92c.jpg",
+    "https://images.vegnonveg.com/resized/400X328/11388/air-max-sndr-hyper-pinkblack-white-pink-66b0bb29104e2.jpg",
+    "https://images.vegnonveg.com/resized/400X328/11369/air-max-1-86-og-light-smoke-greymetallic-silver-grey-66a8c87a72f58.jpg",
+    "https://images.vegnonveg.com/resized/400X328/11347/air-max-dn-se-premium-multicolor-multicolor-669a1ca7d4f65.jpg",
+    "https://images.vegnonveg.com/resized/400X328/11341/air-max-90-nn-whitemetallic-gold-obsidian-white-6690cf0645ec5.jpg",
+    "https://images.vegnonveg.com/resized/400X328/11338/air-max-90-lv8-sailred-stardust-summit-white-white-66979dfc7818e.jpg",
+    "https://images.vegnonveg.com/resized/400X328/11338/air-max-90-lv8-sailred-stardust-summit-white-white-66979dfc9987b.jpg",
+    "https://images.vegnonveg.com/resized/400X328/11339/air-max-90-lv8-sailbarely-green-summit-white-white-66979eb0553b8.jpg",
+    "https://images.vegnonveg.com/resized/400X328/11314/air-max-90-blackwhite-stadium-green-black-6690bd35add59.jpg",
+    "https://images.vegnonveg.com/resized/400X328/11318/air-max-1-whiteaster-pink-light-orewood-brown-black-white-6690bef729bc8.jpg",
+    "https://images.vegnonveg.com/resized/400X328/11313/air-max-90-whitelight-silver-aster-pink-black-white-6690bcde1eab5.jpg",
+    "https://images.vegnonveg.com/resized/400X328/11328/air-max-1-coconut-milkburgundy-crush-armory-navy-white-6690c23b15864.jpg"
+  ];
+  List<String> airforce=[
+    "https://images.vegnonveg.com/resized/400X328/11317/air-force-1-shadow-sailcacao-wow-flax-sesame-white-6690be258346c.jpg",
+    "https://images.vegnonveg.com/resized/400X328/11226/air-force-1-07-lv8-light-british-tanburgundy-crush-brown-666a86b38436d.jpg",
+    "https://images.vegnonveg.com/resized/400X328/11336/air-force-1-07-lv8-1-coconut-milkvintage-green-bicoastal-white-6690cdf402403.jpg",
+    "https://images.vegnonveg.com/resized/400X328/11257/air-force-1-07-nn-hydrangeasblack-raspberry-barely-grape-purple-66865dbe70bcc.jpg",
+    "https://images.vegnonveg.com/resized/400X328/11195/air-force-1-07-saillimestone-pale-vanilla-coconut-milk-cream-66508e9ee2809.jpg",
+    "https://images.vegnonveg.com/resized/400X328/11326/air-force-1-07-whiteuniversity-gold-white-6690c18e24b7c.jpg",
+    "https://images.vegnonveg.com/resized/400X328/8772/air-force-1-07-blackwhite-black_1-63bbfb21984a4.jpg",
+    "https://images.vegnonveg.com/resized/400X328/11475/air-force-1-07-whitedragon-red-white-white-66c717cce8961.jpg"
+  ];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -227,6 +262,20 @@ class _HomePageState extends State<HomePage> {
                               MaterialPageRoute(
                                 builder: (context) => const JordanPage(),
                               ));
+                        }
+                        else if (index == 1) {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const SlidesPage(),
+                              ));
+                        }
+                        else if (index == 2) {
+                        Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                        builder: (context) => const DunksPage(),
+                        ));
                         }
                       },
                       child: Image.network(
@@ -389,7 +438,7 @@ class _HomePageState extends State<HomePage> {
                               ),
                             ),
                           )
-                        : Padding(
+                        :_selectedIndex==3? Padding(
                             padding: const EdgeInsets.all(10),
                             child: SizedBox(
                               height: 300, // Set a specific height if needed
@@ -413,7 +462,51 @@ class _HomePageState extends State<HomePage> {
                                 },
                               ),
                             ),
-                          ),
+                          ):_selectedIndex==4?Padding(
+              padding: const EdgeInsets.all(10),
+              child: SizedBox(
+                height: 300, // Set a specific height if needed
+                child: GridView.builder(
+                  gridDelegate:
+                  const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 10.0, // Add spacing between items
+                    mainAxisSpacing: 10.0, // Add spacing between items
+                  ),
+                  itemCount: airmax.length,
+                  itemBuilder: (context, index) {
+                    return Card(
+                      child: Image.network(
+                        airmax[index],
+                        fit: BoxFit.cover,
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ):Padding(
+              padding: const EdgeInsets.all(10),
+              child: SizedBox(
+                height: 300, // Set a specific height if needed
+                child: GridView.builder(
+                  gridDelegate:
+                  const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 10.0, // Add spacing between items
+                    mainAxisSpacing: 10.0, // Add spacing between items
+                  ),
+                  itemCount: airforce.length,
+                  itemBuilder: (context, index) {
+                    return Card(
+                      child: Image.network(
+                        airforce[index],
+                        fit: BoxFit.cover,
+                      ),
+                    );
+                  },
+                ),
+              ),
+            )
           ],
         ),
       ),
