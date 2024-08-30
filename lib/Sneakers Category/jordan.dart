@@ -95,12 +95,79 @@ class _JordanPageState extends State<JordanPage> {
     "AIR JORDAN 1 RETRO LOW OG 'NEUTRAL GREY/METALLIC SILVER-WHITE'",
     "AIR JORDAN 1 RETRO LOW OG 'NEUTRAL GREY/METALLIC SILVER-WHITE'",
     "AIR JORDAN 1 LOW MM 'PERFECT PINK/METALLIC GOLD'"];
+  final TextEditingController _searchController = TextEditingController();
+  List<String> _filteredSneakerImages = [];
+  List<String> _filteredSneakerNames = [];
+  @override
+  void initState() {
+    super.initState();
+    _filteredSneakerImages = sneakerimages;
+    _filteredSneakerNames = sneakername;
+    _searchController.addListener(_filterSneakers);
+  }
 
+  void _filterSneakers() {
+    final query = _searchController.text.toLowerCase();
+    setState(() {
+      _filteredSneakerImages = sneakerimages
+          .asMap()
+          .entries
+          .where((entry) =>
+          sneakername[entry.key].toLowerCase().contains(query))
+          .map((entry) => entry.value)
+          .toList();
+      _filteredSneakerNames = sneakername
+          .asMap()
+          .entries
+          .where((entry) =>
+          sneakername[entry.key].toLowerCase().contains(query))
+          .map((entry) => entry.value)
+          .toList();
+    });
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title:  Text('Air Jordan',style: GoogleFonts.nunitoSans(),),
+      appBar: PreferredSize(
+        preferredSize: Size(MediaQuery.sizeOf(context).width, 140),
+        child: Column(
+          children: [
+            AppBar(
+              title:  Text('Air Jordan',style: GoogleFonts.nunitoSans(),),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            Center(
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.all(Radius.circular(10)),
+                  border: Border.all(color: Colors.black),
+                ),
+                width: MediaQuery.of(context).size.width * 0.9,
+                height: 50,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                  child: TextField(
+                    controller: _searchController,
+                    style: GoogleFonts.nunitoSans(),
+                    decoration: const InputDecoration(
+                      suffixIcon: Icon(Icons.search, color: Colors.black),
+                      hintText: 'Search',
+                      border: InputBorder.none,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
       body: GridView.builder(
         padding: const EdgeInsets.all(8.0),
@@ -109,7 +176,7 @@ class _JordanPageState extends State<JordanPage> {
           crossAxisSpacing: 8.0,
           mainAxisSpacing: 8.0,
         ),
-        itemCount: sneakerimages.length,
+        itemCount: _filteredSneakerImages.length,
         itemBuilder: (context, index) {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -117,18 +184,18 @@ class _JordanPageState extends State<JordanPage> {
             children: [
               Expanded(
                 child: Image.network(
-                  sneakerimages[index],
+                  _filteredSneakerImages[index],
                   fit: BoxFit.cover,
                 ),
               ),
-              const SizedBox(height: 8.0), // Add spacing between image and text
+              const SizedBox(height: 8.0),
               Center(
                 child: Text(
-                  sneakername[index],
+                  _filteredSneakerNames[index],
                   style: GoogleFonts.nunitoSans(
-                    fontSize: 12.0, // Adjust font size if needed
+                    fontSize: 12.0,
                   ),
-                  maxLines: 2, // Limit text to 2 lines
+                  maxLines: 2,
                 ),
               ),
             ],
