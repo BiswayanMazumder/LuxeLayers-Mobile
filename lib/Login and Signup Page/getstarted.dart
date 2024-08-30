@@ -35,7 +35,7 @@ class _GetStartedPageState extends State<GetStartedPage> {
                 children: [
                   Text(
                     'Bringing LuxeLayers Members the best products, inspirations and'
-                        'stories in sports.',
+                        ' stories in sports.',
                     style: GoogleFonts.nunitoSans(
                       fontSize: 20,
                       fontWeight: FontWeight.w600,
