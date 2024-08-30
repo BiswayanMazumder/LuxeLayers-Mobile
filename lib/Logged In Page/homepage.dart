@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:luxelayers/Sneakers%20Category/jordan.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -80,7 +81,7 @@ class _HomePageState extends State<HomePage> {
     "https://images.vegnonveg.com/resized/400X328/11475/air-force-1-07-whitedragon-red-white-white-66c717cce8961.jpg"
   ];
   int _selectedIndex = 0; // Track the selected index
-  List <String> jordans=[
+  List<String> jordans = [
     "https://images.vegnonveg.com/resized/400X328/11393/air-jordan-1-low-off-noirarchaeo-brown-sail-brown-66b362b30f4dc.jpg",
     "https://images.vegnonveg.com/resized/400X328/11393/air-jordan-1-low-off-noirarchaeo-brown-sail-brown-66b362b35ce83.jpg",
     "https://images.vegnonveg.com/resized/400X328/11422/air-jordan-4-retro-se-smoke-greyiron-grey-cement-grey-grey-66b48d859813d.jpg",
@@ -124,7 +125,7 @@ class _HomePageState extends State<HomePage> {
     "https://images.vegnonveg.com/resized/400X328/11233/air-jordan-13-retro-dune-redterra-blush-white-red-667549df633ec.jpg",
     "https://images.vegnonveg.com/resized/400X328/10654/air-jordan-1-low-85-whitenavy-blue-65ba3f129749e.jpg"
   ];
-  List <String> slides=[
+  List<String> slides = [
     "https://images.vegnonveg.com/resized/400X328/11240/jordan-jumpman-slide-neutral-greymetallic-silver-grey-667d41362b384.jpg",
     "https://images.vegnonveg.com/resized/400X328/11225/calm-sandal-light-bone-cream-666a83e84e6a9.jpg",
     "https://images.vegnonveg.com/resized/400X328/11225/calm-sandal-light-bone-cream-666a83e87116a.jpg",
@@ -141,7 +142,7 @@ class _HomePageState extends State<HomePage> {
     "https://images.vegnonveg.com/resized/400X328/11436/chuck-70-mule-slip-egretblack-black-66c6d00abb1b9.jpg",
     "https://images.vegnonveg.com/resized/400X328/11439/run-star-utility-sandal-cx-ox-egret-cream-66c6d2efece41.jpg"
   ];
-  List<String> dunks=[
+  List<String> dunks = [
     "https://images.vegnonveg.com/resized/400X328/5358/nike-dunk-low-retro-whiteblack-white-60e41a479d3e7.jpg",
     "https://images.vegnonveg.com/resized/400X328/5363/w-nike-dunk-low-whiteblack-white-60e41b4c68977.jpg",
     "https://images.vegnonveg.com/resized/400X328/8828/nike-dunk-low-retro-whitegrey-fog-63ce764079383.jpg",
@@ -154,7 +155,6 @@ class _HomePageState extends State<HomePage> {
     "https://images.vegnonveg.com/resized/400X328/11406/dunk-low-coconut-milkflax-sail-brown-66b497326da01.jpg",
     "https://images.vegnonveg.com/resized/400X328/11408/dunk-low-game-royalblack-white-multicolor-66b4784782d8e.jpg",
     "https://images.vegnonveg.com/resized/400X328/11397/dunk-low-retro-whitedragon-red-black-white-66b3667e7b69f.jpg"
-
   ];
   @override
   Widget build(BuildContext context) {
@@ -219,9 +219,20 @@ class _HomePageState extends State<HomePage> {
                 child: PageView.builder(
                   itemCount: imageUrls.length,
                   itemBuilder: (context, index) {
-                    return Image.network(
-                      imageUrls[index],
-                      fit: BoxFit.fill,
+                    return InkWell(
+                      onTap: () {
+                        if (index == 0) {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const JordanPage(),
+                              ));
+                        }
+                      },
+                      child: Image.network(
+                        imageUrls[index],
+                        fit: BoxFit.fill,
+                      ),
                     );
                   },
                 ),
@@ -302,95 +313,107 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
             ),
-          _selectedIndex==0?  Padding(
-              padding: const EdgeInsets.all(10),
-              child: SizedBox(
-                height: 300, // Set a specific height if needed
-                child: GridView.builder(
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 10.0, // Add spacing between items
-                    mainAxisSpacing: 10.0, // Add spacing between items
-                  ),
-                  itemCount: sneakerimages.length,
-                  itemBuilder: (context, index) {
-                    return Card(
-                      child: Image.network(
-                        sneakerimages[index],
-                        fit: BoxFit.cover,
+            _selectedIndex == 0
+                ? Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: SizedBox(
+                      height: 300, // Set a specific height if needed
+                      child: GridView.builder(
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 10.0, // Add spacing between items
+                          mainAxisSpacing: 10.0, // Add spacing between items
+                        ),
+                        itemCount: sneakerimages.length,
+                        itemBuilder: (context, index) {
+                          return Card(
+                            child: Image.network(
+                              sneakerimages[index],
+                              fit: BoxFit.cover,
+                            ),
+                          );
+                        },
                       ),
-                    );
-                  },
-                ),
-              ),
-            ):
-          _selectedIndex==1?
-          Padding(
-            padding: const EdgeInsets.all(10),
-            child: SizedBox(
-              height: 300, // Set a specific height if needed
-              child: GridView.builder(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 10.0, // Add spacing between items
-                  mainAxisSpacing: 10.0, // Add spacing between items
-                ),
-                itemCount: jordans.length,
-                itemBuilder: (context, index) {
-                  return Card(
-                    child: Image.network(
-                      jordans[index],
-                      fit: BoxFit.cover,
                     ),
-                  );
-                },
-              ),
-            ),
-          ):
-          _selectedIndex==2?
-          Padding(
-            padding: const EdgeInsets.all(10),
-            child: SizedBox(
-              height: 300, // Set a specific height if needed
-              child: GridView.builder(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 10.0, // Add spacing between items
-                  mainAxisSpacing: 10.0, // Add spacing between items
-                ),
-                itemCount: slides.length,
-                itemBuilder: (context, index) {
-                  return Card(
-                    child: Image.network(
-                      slides[index],
-                      fit: BoxFit.cover,
-                    ),
-                  );
-                },
-              ),
-            ),
-          ):Padding(
-            padding: const EdgeInsets.all(10),
-            child: SizedBox(
-              height: 300, // Set a specific height if needed
-              child: GridView.builder(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 10.0, // Add spacing between items
-                  mainAxisSpacing: 10.0, // Add spacing between items
-                ),
-                itemCount: dunks.length,
-                itemBuilder: (context, index) {
-                  return Card(
-                    child: Image.network(
-                      dunks[index],
-                      fit: BoxFit.cover,
-                    ),
-                  );
-                },
-              ),
-            ),
-          ),
+                  )
+                : _selectedIndex == 1
+                    ? Padding(
+                        padding: const EdgeInsets.all(10),
+                        child: SizedBox(
+                          height: 300, // Set a specific height if needed
+                          child: GridView.builder(
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              crossAxisSpacing:
+                                  10.0, // Add spacing between items
+                              mainAxisSpacing:
+                                  10.0, // Add spacing between items
+                            ),
+                            itemCount: jordans.length,
+                            itemBuilder: (context, index) {
+                              return Card(
+                                child: Image.network(
+                                  jordans[index],
+                                  fit: BoxFit.cover,
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      )
+                    : _selectedIndex == 2
+                        ? Padding(
+                            padding: const EdgeInsets.all(10),
+                            child: SizedBox(
+                              height: 300, // Set a specific height if needed
+                              child: GridView.builder(
+                                gridDelegate:
+                                    const SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2,
+                                  crossAxisSpacing:
+                                      10.0, // Add spacing between items
+                                  mainAxisSpacing:
+                                      10.0, // Add spacing between items
+                                ),
+                                itemCount: slides.length,
+                                itemBuilder: (context, index) {
+                                  return Card(
+                                    child: Image.network(
+                                      slides[index],
+                                      fit: BoxFit.cover,
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          )
+                        : Padding(
+                            padding: const EdgeInsets.all(10),
+                            child: SizedBox(
+                              height: 300, // Set a specific height if needed
+                              child: GridView.builder(
+                                gridDelegate:
+                                    const SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2,
+                                  crossAxisSpacing:
+                                      10.0, // Add spacing between items
+                                  mainAxisSpacing:
+                                      10.0, // Add spacing between items
+                                ),
+                                itemCount: dunks.length,
+                                itemBuilder: (context, index) {
+                                  return Card(
+                                    child: Image.network(
+                                      dunks[index],
+                                      fit: BoxFit.cover,
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
           ],
         ),
       ),
