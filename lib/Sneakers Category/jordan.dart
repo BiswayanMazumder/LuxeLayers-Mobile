@@ -232,6 +232,7 @@ class _JordanPageState extends State<JordanPage> {
                       MaterialPageRoute(
                         builder: (context) => Product_Details(
                             name: sneakername[index],
+                            productid: documentNames[index],
                             imageUrl: sneakerimages[index]),
                       ));
                 },
