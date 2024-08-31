@@ -1,5 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:luxelayers/Sneaker%20Detail%20Page/productdetails.dart';
 
 class JordanPage extends StatefulWidget {
   const JordanPage({super.key});
@@ -53,7 +56,8 @@ class _JordanPageState extends State<JordanPage> {
     "https://images.vegnonveg.com/resized/400X328/11233/air-jordan-13-retro-dune-redterra-blush-white-red-667549df633ec.jpg",
     "https://images.vegnonveg.com/resized/400X328/10654/air-jordan-1-low-85-whitenavy-blue-65ba3f129749e.jpg"
   ];
-  List<String> sneakername = [ "AIR JORDAN 1 LOW 'OFF NOIR/ARCHAEO BROWN-SAIL'",
+  List<String> sneakername = [
+    "AIR JORDAN 1 LOW 'OFF NOIR/ARCHAEO BROWN-SAIL'",
     "AIR JORDAN 4 RETRO SE 'SMOKE GREY/IRON GREY-CEMENT GREY'",
     "AIR JORDAN 1 LOW 'WHITE/METALLIC GOLD-BLACK'",
     "AIR JORDAN 1 MID SE 'WHITE/OXIDIZED GREEN-SAIL-NEUTRAL GREY'",
@@ -94,15 +98,44 @@ class _JordanPageState extends State<JordanPage> {
     "AIR JORDAN 1 LOW SE 'METALLIC SILVER/PHOTON DUST-WOLF GREY'",
     "AIR JORDAN 1 RETRO LOW OG 'NEUTRAL GREY/METALLIC SILVER-WHITE'",
     "AIR JORDAN 1 RETRO LOW OG 'NEUTRAL GREY/METALLIC SILVER-WHITE'",
-    "AIR JORDAN 1 LOW MM 'PERFECT PINK/METALLIC GOLD'"];
+    "AIR JORDAN 1 LOW MM 'PERFECT PINK/METALLIC GOLD'"
+  ];
+
   final TextEditingController _searchController = TextEditingController();
   List<String> _filteredSneakerImages = [];
   List<String> _filteredSneakerNames = [];
+  List<String> documentNames = [];
+  Future<void> fetchDocumentNames() async {
+    try {
+      // Access the Firestore instance
+      FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+      // Fetch the collection
+      QuerySnapshot querySnapshot =
+          await firestore.collection('sneakers').get();
+
+      // Extract document IDs and add them to the list
+      List<String> names = querySnapshot.docs.map((doc) => doc.id).toList();
+
+      setState(() {
+        documentNames = names;
+      });
+      if (kDebugMode) {
+        print(documentNames);
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print("Error fetching document names: $e");
+      }
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     _filteredSneakerImages = sneakerimages;
     _filteredSneakerNames = sneakername;
+    fetchDocumentNames();
     _searchController.addListener(_filterSneakers);
   }
 
@@ -112,15 +145,15 @@ class _JordanPageState extends State<JordanPage> {
       _filteredSneakerImages = sneakerimages
           .asMap()
           .entries
-          .where((entry) =>
-          sneakername[entry.key].toLowerCase().contains(query))
+          .where(
+              (entry) => sneakername[entry.key].toLowerCase().contains(query))
           .map((entry) => entry.value)
           .toList();
       _filteredSneakerNames = sneakername
           .asMap()
           .entries
-          .where((entry) =>
-          sneakername[entry.key].toLowerCase().contains(query))
+          .where(
+              (entry) => sneakername[entry.key].toLowerCase().contains(query))
           .map((entry) => entry.value)
           .toList();
     });
@@ -131,6 +164,7 @@ class _JordanPageState extends State<JordanPage> {
     _searchController.dispose();
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -139,7 +173,10 @@ class _JordanPageState extends State<JordanPage> {
         child: Column(
           children: [
             AppBar(
-              title:  Text('Air Jordan',style: GoogleFonts.nunitoSans(),),
+              title: Text(
+                'Air Jordan',
+                style: GoogleFonts.nunitoSans(),
+              ),
             ),
             const SizedBox(
               height: 20,
@@ -183,11 +220,26 @@ class _JordanPageState extends State<JordanPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Expanded(
+                  child: InkWell(
+                onTap: () {
+                  if (kDebugMode) {
+                    print(documentNames[index]);
+                    print(sneakerimages[index]);
+                    print(sneakername[index]);
+                  }
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => Product_Details(
+                            name: sneakername[index],
+                            imageUrl: sneakerimages[index]),
+                      ));
+                },
                 child: Image.network(
                   _filteredSneakerImages[index],
                   fit: BoxFit.cover,
                 ),
-              ),
+              )),
               const SizedBox(height: 8.0),
               Center(
                 child: Text(
