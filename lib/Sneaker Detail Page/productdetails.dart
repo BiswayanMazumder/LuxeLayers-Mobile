@@ -36,11 +36,17 @@ class _Product_DetailsState extends State<Product_Details> {
       print('Price ${price}');
     }
   }
+  Future<void> uploadproductimage() async{
+    await _firestore.collection('sneakers').doc(widget.productid).update({
+      'Product Image':widget.imageUrl
+    });
+  }
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     fetchprice();
+    uploadproductimage();
   }
   @override
   Widget build(BuildContext context) {
