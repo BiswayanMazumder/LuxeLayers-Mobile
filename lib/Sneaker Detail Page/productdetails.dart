@@ -38,16 +38,80 @@ class _Product_DetailsState extends State<Product_Details> {
   }
   Future<void> uploadproductimage() async{
     await _firestore.collection('sneakers').doc(widget.productid).update({
-      'Product Image':widget.imageUrl
+      'Product Image':widget.imageUrl,
+      'UK 6':true,
+      'UK 7':false,
+      'UK 8':true,
+      'UK 9':true,
+      'UK 10':false,
+      'UK 11':true,
+      'UK 12':false
     });
+  }
+  bool isuk6=false;
+  bool isuk7=false;
+  bool isuk8=false;
+  bool isuk9=false;
+  bool isuk10=false;
+  bool isuk11=false;
+  bool isuk12=false;
+  List<String> categories = [
+    // 'UK 6',
+    // // 'UK 6.5',
+    // 'UK 7',
+    // // 'UK 7.5',
+    // 'UK 8',
+    // 'UK 9',
+    // 'UK 10',
+    // 'UK 11',
+    // 'UK 12'
+  ];
+  Future<void> fetchshoesizes() async{
+    final docsnap=await _firestore.collection('sneakers').doc(widget.productid).get();
+    if(docsnap.exists){
+      setState(() {
+        isuk6=docsnap.data()?['UK 6'];
+        if(isuk6){
+          categories.add('UK 6');
+        }
+        isuk7=docsnap.data()?['UK 7'];
+        if(isuk7){
+          categories.add('UK 7');
+        }
+        isuk8=docsnap.data()?['UK 8'];
+        if(isuk8){
+          categories.add('UK 8');
+        }
+        isuk9=docsnap.data()?['UK 9'];
+        if(isuk9){
+          categories.add('UK 9');
+        }
+        isuk10=docsnap.data()?['UK 10'];
+        if(isuk10){
+          categories.add('UK 10');
+        }
+        isuk11=docsnap.data()?['UK 11'];
+        if(isuk11){
+          categories.add('UK 11');
+        }
+        isuk12=docsnap.data()?['UK 12'];
+        if(isuk12){
+          categories.add('UK 12');
+        }
+        isfetched=true;
+      });
+    }
   }
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     fetchprice();
-    uploadproductimage();
+    fetchshoesizes();
+    // uploadproductimage();
   }
+
+  int _selectedIndex = 0;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -130,7 +194,64 @@ class _Product_DetailsState extends State<Product_Details> {
                 fontWeight: FontWeight.w500,
                 fontSize: 15
               ),),
-            )
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Text('Select Size',style: GoogleFonts.nunitoSans(),),
+            const SizedBox(
+              height: 20,
+            ),
+            Padding(
+              padding:
+              const EdgeInsets.only(left: 5.0,right: 5.0), // Add 30px space from left
+              child: SizedBox(
+                height: 50, // Adjust the height as needed
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal, // Horizontal scroll
+                  itemCount: categories.length,
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.only(left: 20.0),
+                      child: InkWell(
+                        onTap: () {
+                          setState(() {
+                            _selectedIndex = index; // Update the selected index
+                          });
+                        },
+                        child: Container(
+                          height: 20,
+                          width: 80,
+                          decoration: BoxDecoration(
+                            color: _selectedIndex == index
+                                ? Colors.green
+                                : Colors.transparent,
+                            borderRadius:
+                            const BorderRadius.all(Radius.circular(10)),
+                            border: Border.all(
+                                color: _selectedIndex == index
+                                    ? Colors.green
+                                    : Colors.black),
+                          ),
+                          child: Center(
+                            child: Text(
+                              categories[index],
+                              style: GoogleFonts.nunitoSans(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
           ],
         ),
     ): const Center(
