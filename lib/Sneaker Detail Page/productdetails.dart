@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -48,6 +49,40 @@ class _Product_DetailsState extends State<Product_Details> {
       'UK 12':false
     });
   }
+  final FirebaseAuth _auth=FirebaseAuth.instance;
+  List<dynamic> cartitems=[];
+  bool iscartadded=false;
+  Future<void> fetchcartdetails() async{
+    final user=_auth.currentUser;
+    final docsnap=await _firestore.collection('Cart Items').doc(user!.uid).get();
+    if(docsnap.exists){
+      setState(() {
+        cartitems=docsnap.data()?['Product ID'];
+      });
+    }
+    if(cartitems.contains(widget.productid)){
+      setState(() {
+        iscartadded=true;
+      });
+    }
+  }
+  Future<void> addcartitems(bool cartitem) async{
+    final user=_auth.currentUser;
+    if(!cartitem){
+      await _firestore.collection('Cart Items').doc(user!.uid).set({
+        'Product ID':FieldValue.arrayUnion([
+          widget.productid
+        ])
+      },SetOptions(merge: true));
+    }
+    if(cartitem){
+      await _firestore.collection('Cart Items').doc(user!.uid).set({
+        'Product ID':FieldValue.arrayRemove([
+          widget.productid
+        ])
+      },SetOptions(merge: true));
+    }
+  }
   bool isuk6=false;
   bool isuk7=false;
   bool isuk8=false;
@@ -56,15 +91,7 @@ class _Product_DetailsState extends State<Product_Details> {
   bool isuk11=false;
   bool isuk12=false;
   List<String> categories = [
-    // 'UK 6',
-    // // 'UK 6.5',
-    // 'UK 7',
-    // // 'UK 7.5',
-    // 'UK 8',
-    // 'UK 9',
-    // 'UK 10',
-    // 'UK 11',
-    // 'UK 12'
+
   ];
   Future<void> fetchshoesizes() async{
     final docsnap=await _firestore.collection('sneakers').doc(widget.productid).get();
@@ -109,6 +136,7 @@ class _Product_DetailsState extends State<Product_Details> {
     fetchprice();
     fetchshoesizes();
     // uploadproductimage();
+    fetchcartdetails();
   }
 
   int _selectedIndex = 0;
@@ -129,19 +157,29 @@ class _Product_DetailsState extends State<Product_Details> {
                   ),),
                   const Spacer(),
                   InkWell(
-                    onTap:(){
+                    onTap: () async {
+                      await fetchcartdetails(); // Ensure the cart details are fetched first
 
+                      if (iscartadded) {
+                        await addcartitems(true); // Remove the item from the cart
+                      } else {
+                        await addcartitems(false); // Add the item to the cart
+                      }
+
+                      setState(() {
+                        iscartadded = !iscartadded; // Toggle the cart status after the operation is complete
+                      });
                     },
                     child: Container(
                       width: 150,
                       height: 50,
-                      decoration: const BoxDecoration(
-                        color: Colors.green,
-                        borderRadius: BorderRadius.all(Radius.circular(10))
+                      decoration:  BoxDecoration(
+                        color:iscartadded?Colors.yellow: Colors.green,
+                        borderRadius: const BorderRadius.all(Radius.circular(10))
                       ),
                       child: Center(
-                        child: Text('Add To Cart',style: GoogleFonts.nunitoSans(
-                          color: Colors.white,
+                        child: Text(iscartadded?'Added To Cart':'Add To Cart',style: GoogleFonts.nunitoSans(
+                          color:iscartadded?Colors.black: Colors.white,
                           fontWeight: FontWeight.w600
                         ),),
                       ),
