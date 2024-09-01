@@ -119,6 +119,18 @@ class _Product_DetailsState extends State<Product_Details> {
                 style: GoogleFonts.nunitoSans(fontSize: 18, fontWeight: FontWeight.bold),
               ),
             ),
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Text('${widget.name} are versatile footwear designed for comfort and style. '
+                  'Originally crafted for athletic use, they have become a staple in '
+                  'casual fashion. Available in numerous designs and materials, sneakers'
+                  ' blend functionality with trendiness, making them popular for both '
+                  'sports and everyday wear. Their enduring appeal lies in their adaptabil'
+                  'ity and comfort.',style: GoogleFonts.nunitoSans(
+                fontWeight: FontWeight.w500,
+                fontSize: 15
+              ),),
+            )
           ],
         ),
     ): const Center(
