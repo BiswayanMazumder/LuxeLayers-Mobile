@@ -128,18 +128,23 @@ class _Product_DetailsState extends State<Product_Details> {
                       color: Colors.black,fontSize: 20,fontWeight: FontWeight.w600
                   ),),
                   const Spacer(),
-                  Container(
-                    width: 150,
-                    height: 50,
-                    decoration: const BoxDecoration(
-                      color: Colors.green,
-                      borderRadius: BorderRadius.all(Radius.circular(10))
-                    ),
-                    child: Center(
-                      child: Text('Add To Cart',style: GoogleFonts.nunitoSans(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600
-                      ),),
+                  InkWell(
+                    onTap:(){
+
+                    },
+                    child: Container(
+                      width: 150,
+                      height: 50,
+                      decoration: const BoxDecoration(
+                        color: Colors.green,
+                        borderRadius: BorderRadius.all(Radius.circular(10))
+                      ),
+                      child: Center(
+                        child: Text('Add To Cart',style: GoogleFonts.nunitoSans(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600
+                        ),),
+                      ),
                     ),
                   )
                 ],
@@ -182,6 +187,14 @@ class _Product_DetailsState extends State<Product_Details> {
                 widget.name,
                 style: GoogleFonts.nunitoSans(fontSize: 18, fontWeight: FontWeight.bold),
               ),
+            ),
+            Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 10,left: 10),
+                  child: Text('Style: ${widget.productid}'),
+                )
+              ],
             ),
             Padding(
               padding: const EdgeInsets.all(10.0),
