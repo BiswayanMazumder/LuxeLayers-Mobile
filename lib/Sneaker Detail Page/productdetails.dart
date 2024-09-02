@@ -66,6 +66,39 @@ class _Product_DetailsState extends State<Product_Details> {
       });
     }
   }
+  List<dynamic> likeditems=[];
+  // bool isliked=false;
+  Future<void> fetchlikedetails() async{
+    final user=_auth.currentUser;
+    final docsnap=await _firestore.collection('Liked Items').doc(user!.uid).get();
+    if(docsnap.exists){
+      setState(() {
+        likeditems=docsnap.data()?['Product ID'];
+      });
+    }
+    if(likeditems.contains(widget.productid)){
+      setState(() {
+        isliked=true;
+      });
+    }
+  }
+  Future<void> addlikeitems(bool isliked) async{
+    final user=_auth.currentUser;
+    if(!isliked){
+      await _firestore.collection('Liked Items').doc(user!.uid).set({
+        'Product ID':FieldValue.arrayUnion([
+          widget.productid
+        ])
+      },SetOptions(merge: true));
+    }
+    if(isliked){
+      await _firestore.collection('Liked Items').doc(user!.uid).set({
+        'Product ID':FieldValue.arrayRemove([
+          widget.productid
+        ])
+      },SetOptions(merge: true));
+    }
+  }
   Future<void> addcartitems(bool cartitem) async{
     final user=_auth.currentUser;
     if(!cartitem){
@@ -137,6 +170,7 @@ class _Product_DetailsState extends State<Product_Details> {
     fetchshoesizes();
     // uploadproductimage();
     fetchcartdetails();
+    fetchlikedetails();
   }
 
   int _selectedIndex = 0;
@@ -198,11 +232,19 @@ class _Product_DetailsState extends State<Product_Details> {
           Row(
             children: [
             isfetched?  InkWell(
-                onTap: (){
-                  setState(() {
-                    isliked=!isliked;
-                  });
-                },
+              onTap: () async {
+                await fetchlikedetails(); // Ensure the cart details are fetched first
+
+                if (isliked) {
+                  await addlikeitems(true); // Remove the item from the cart
+                } else {
+                  await addlikeitems(false); // Add the item to the cart
+                }
+
+                setState(() {
+                  isliked = !isliked; // Toggle the cart status after the operation is complete
+                });
+              },
                 child:  Icon(isliked?Icons.favorite:Icons.favorite_border,
                   color:isliked? Colors.red:Colors.black,),
               ):Container(),
