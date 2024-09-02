@@ -3,7 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-
+import 'package:google_generative_ai/google_generative_ai.dart';
+import 'package:luxelayers/Environment%20Variables/.env.dart';
 class Product_Details extends StatefulWidget {
   final String name;
   final String imageUrl;
@@ -171,8 +172,31 @@ class _Product_DetailsState extends State<Product_Details> {
     // uploadproductimage();
     fetchcartdetails();
     fetchlikedetails();
+    fetchgeminiresponse();
   }
+  String? about='';
+  void fetchgeminiresponse()async{
+    final apiKey = Environment.Geminiapi;
+    if (apiKey == null) {
+      if (kDebugMode) {
+        print('No \$API_KEY environment variable');
+      }
+    }
+    final model = GenerativeModel(
+      model: 'gemini-1.5-flash',
+      apiKey: apiKey,
+    );
+    final prompt = '${widget.name} in 100 words';
 
+    final response = await model.generateContent([Content.text(prompt)]);
+    setState(() {
+      about=response.text;
+      isfetched=true;
+    });
+    if (kDebugMode) {
+      print(response.text);
+    }
+  }
   int _selectedIndex = 0;
   @override
   Widget build(BuildContext context) {
@@ -278,12 +302,7 @@ class _Product_DetailsState extends State<Product_Details> {
             ),
             Padding(
               padding: const EdgeInsets.all(10.0),
-              child: Text('${widget.name} are versatile footwear designed for comfort and style. '
-                  'Originally crafted for athletic use, they have become a staple in '
-                  'casual fashion. Available in numerous designs and materials, sneakers'
-                  ' blend functionality with trendiness, making them popular for both '
-                  'sports and everyday wear. Their enduring appeal lies in their adaptabil'
-                  'ity and comfort.',style: GoogleFonts.nunitoSans(
+              child: Text(about!,style: GoogleFonts.nunitoSans(
                 fontWeight: FontWeight.w500,
                 fontSize: 15
               ),),
