@@ -5,6 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:luxelayers/Environment%20Variables/.env.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path/path.dart' as path;
+import 'dart:io';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class Product_Details extends StatefulWidget {
   final String name;
@@ -181,25 +186,34 @@ class _Product_DetailsState extends State<Product_Details> {
   TextEditingController _review = TextEditingController();
   Future<void> writereviews() async {
     final user = _auth.currentUser;
+    final reviewImageUrl = _uploadedImageUrl;
+
     await _firestore.collection('Reviews').doc(widget.productid).set({
       'Review': FieldValue.arrayUnion([_review.text]),
-      'Review Image': FieldValue.arrayUnion([null])
+      'Review Image': reviewImageUrl != null
+          ? FieldValue.arrayUnion([reviewImageUrl])
+          : FieldValue.arrayUnion([null]),
     }, SetOptions(merge: true));
   }
 
   List<dynamic> reviewitems = [];
+  List<dynamic> reviewphotos = [];
   Future<void> fetchreviews() async {
     final docsnap =
         await _firestore.collection('Reviews').doc(widget.productid).get();
     if (docsnap.exists) {
       setState(() {
         reviewitems = docsnap.data()?['Review'];
+        reviewphotos = docsnap.data()?['Review Image'];
       });
-      print('Review ${reviewitems}');
+      print('Review ${reviewphotos}');
     }
   }
 
   String? about = '';
+  XFile? _selectedImage;
+  String? _uploadedImageUrl;
+  final ImagePicker _picker = ImagePicker();
   void fetchgeminiresponse() async {
     final apiKey = Environment.Geminiapi;
     if (apiKey == null) {
@@ -221,6 +235,45 @@ class _Product_DetailsState extends State<Product_Details> {
     if (kDebugMode) {
       print(response.text);
     }
+  }
+
+  Future<void> _pickImage() async {
+    final XFile? pickedImage =
+        await _picker.pickImage(source: ImageSource.gallery);
+    if (pickedImage != null) {
+      setState(() {
+        _selectedImage = pickedImage;
+      });
+      // Optionally, you could directly call `_uploadImageToFirebase(pickedImage)` here
+    }
+  }
+
+  Future<void> _uploadImageToFirebase(XFile image) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    final storageRef = FirebaseStorage.instance.ref().child(
+        'reviews/${widget.productid}/${DateTime.now().toIso8601String()}');
+
+    final uploadTask = storageRef.putFile(File(image.path));
+    final snapshot = await uploadTask.whenComplete(() => {});
+    final downloadUrl = await snapshot.ref.getDownloadURL();
+
+    setState(() {
+      _uploadedImageUrl = downloadUrl;
+    });
+  }
+
+  Future<void> _updateFirestoreWithImage(String imageUrl) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    await FirebaseFirestore.instance
+        .collection('Reviews')
+        .doc(widget.productid)
+        .update({
+      'Review Image': FieldValue.arrayUnion([imageUrl])
+    });
   }
 
   int _selectedIndex = 0;
@@ -423,9 +476,13 @@ class _Product_DetailsState extends State<Product_Details> {
                       padding: const EdgeInsets.only(left: 20),
                       child: Row(
                         children: [
-                          CircleAvatar(
-                            radius: 30,
-                            child: Image.network(widget.imageUrl),
+                          InkWell(
+                            onTap: _pickImage,
+                            child: CircleAvatar(
+                              backgroundColor: Colors.transparent,
+                              radius: 30,
+                              child: Image.network(widget.imageUrl),
+                            ),
                           ),
                           const SizedBox(
                             width: 10,
@@ -439,9 +496,25 @@ class _Product_DetailsState extends State<Product_Details> {
                                   hintText: 'Enter Your Review',
                                   suffixIcon: InkWell(
                                     onTap: () async {
-                                      if (_review.text != '') {
+                                      if (_review.text.isNotEmpty) {
+                                        // Upload the image if it is selected
+                                        if (_selectedImage != null) {
+                                          await _uploadImageToFirebase(
+                                              _selectedImage!);
+                                        }
+
+                                        // Write the review along with the uploaded image URL (if available)
                                         await writereviews();
+
+                                        // Clear the review text field and reset image
                                         _review.clear();
+                                        setState(() {
+                                          _selectedImage = null;
+                                          _uploadedImageUrl =
+                                              null; // Ensure to clear the URL if needed
+                                        });
+
+                                        // Refresh the reviews
                                         await fetchreviews();
                                       }
                                     },
@@ -462,20 +535,40 @@ class _Product_DetailsState extends State<Product_Details> {
                     Padding(
                         padding: const EdgeInsets.only(left: 20),
                         child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             for (int i = 0; i < reviewitems.length; i++)
-                              Row(
+                              Column(
                                 children: [
-                                  CircleAvatar(
-                                    radius: 30,
-                                    backgroundColor: Colors.white,
-                                    child: Image.network(
-                                      'https://media.istockphoto.com/id/1341046662/vector/picture-profile-icon-human-or-people-sign-and-symbol-for-template-design.jpg?s=612x612&w=0&k=20&c=A7z3OK0fElK3tFntKObma-3a7PyO8_2xxW0jtmjzT78=',
-                                      width: 30,
-                                      height: 30,
-                                    ),
+                                  Row(
+                                    children: [
+                                      CircleAvatar(
+                                        radius: 30,
+                                        backgroundColor: Colors.transparent,
+                                        child: Image.network(
+                                          'https://media.istockphoto.com/id/1341046662/vector/picture-profile-icon-human-or-people-sign-and-symbol-for-template-design.jpg?s=612x612&w=0&k=20&c=A7z3OK0fElK3tFntKObma-3a7PyO8_2xxW0jtmjzT78=',
+                                          width: 30,
+                                          height: 30,
+                                        ),
+                                      ),
+                                      Text('${reviewitems[i]}'),
+                                    ],
                                   ),
-                                  Text('${reviewitems[i]}'),
+                                  if (reviewphotos[i] != null)
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 40),
+                                      child: Row(
+                                        children: [
+                                          Image(
+                                            image:
+                                                NetworkImage(reviewphotos[i]),
+                                            height: 200,
+                                            width: 200,
+                                          )
+                                        ],
+                                      ),
+                                    )
                                 ],
                               ),
                             const SizedBox(
