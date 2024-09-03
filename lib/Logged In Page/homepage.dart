@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -143,6 +144,7 @@ class _HomePageState extends State<HomePage> {
   ];
   @override
   void initState() {
+    fetchcartdetails();
     // TODO: implement initState
     super.initState();
     for (int i = 0; i < jordans.length; i++) {
@@ -162,6 +164,20 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  List<dynamic> cartitems = [];
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  int totalcart = 0;
+  Future<void> fetchcartdetails() async {
+    final user = _auth.currentUser;
+    final docsnap =
+        await _firestore.collection('Cart Items').doc(user!.uid).get();
+    if (docsnap.exists) {
+      setState(() {
+        cartitems = docsnap.data()?['Product ID'];
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -177,12 +193,44 @@ class _HomePageState extends State<HomePage> {
             padding: const EdgeInsets.only(right: 20),
             child: Row(
               children: [
-                InkWell(
-                  onTap: () {},
-                  child: const Icon(
-                    CupertinoIcons.bag,
-                    color: Colors.black,
-                  ),
+                Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    InkWell(
+                      onTap: () {},
+                      child: const Icon(
+                        CupertinoIcons.bag,
+                        color: Colors.black,
+                        size: 30.0, // Adjust size if necessary
+                      ),
+                    ),
+                    Positioned(
+                      right: 0,
+                      top: 0,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 6.0, vertical: 2.0),
+                        decoration: BoxDecoration(
+                          color: Colors.red,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        constraints: const BoxConstraints(
+                          minWidth: 20,
+                          minHeight: 20,
+                        ),
+                        child: Center(
+                          child: Text(
+                            cartitems.length.toString(),
+                            style: GoogleFonts.nunitoSans(
+                              color: Colors.white,
+                              fontSize: 12.0,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(
                   width: 10,
@@ -191,10 +239,11 @@ class _HomePageState extends State<HomePage> {
                   onTap: () async {
                     await _auth.signOut();
                     Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => GetStartedPage(),
-                        ));
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => GetStartedPage(),
+                      ),
+                    );
                   },
                   child: const Icon(
                     Icons.login,
@@ -203,7 +252,7 @@ class _HomePageState extends State<HomePage> {
                 ),
               ],
             ),
-          )
+          ),
         ],
       ),
       body: SingleChildScrollView(
