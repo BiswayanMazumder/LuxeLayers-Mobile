@@ -170,7 +170,7 @@ class _Product_DetailsState extends State<Product_Details> {
     super.initState();
     fetchprice();
     fetchshoesizes();
-    uploadproductimage();
+    // uploadproductimage();
     fetchcartdetails();
     fetchlikedetails();
     fetchgeminiresponse();

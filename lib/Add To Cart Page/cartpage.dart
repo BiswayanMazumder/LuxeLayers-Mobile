@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:luxelayers/Sneaker%20Detail%20Page/productdetails.dart';
 
 class CartPage extends StatefulWidget {
   const CartPage({super.key});
@@ -31,7 +32,7 @@ class _CartPageState extends State<CartPage> {
   List<dynamic> price = [];
   List<dynamic> image = [];
   List<bool> avaliability = [];
-
+  bool isloaded = false;
   Future<void> fetchcartproductdetails() async {
     await fetchcartdetails();
 
@@ -44,6 +45,7 @@ class _CartPageState extends State<CartPage> {
           price.add(docsnap.data()?['Price']);
           image.add(docsnap.data()?['Product Image']);
           avaliability.add(docsnap.data()?['Avaliable']);
+          isloaded = true;
         });
       }
       // print('Name $name');
@@ -70,47 +72,104 @@ class _CartPageState extends State<CartPage> {
           style: GoogleFonts.nunitoSans(),
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.only(top: 10, left: 20),
-        child: ListView.builder(
-          itemCount: cartitems.length,
-          itemBuilder: (context, index) {
-            return Column(
-              children: [
-                SizedBox(
-                  width: MediaQuery.of(context).size.width,
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 30, bottom: 50),
-                    child: Column(
-                      children: [
-                        Row(
-                          children: [
-                            Image(
-                              image: NetworkImage(image[index]),
-                              height: 100,
-                              width: 100,
+      body: isloaded
+          ? Padding(
+              padding: const EdgeInsets.only(top: 10, left: 20),
+              child: ListView.builder(
+                itemCount: cartitems.length,
+                itemBuilder: (context, index) {
+                  return Column(
+                    children: [
+                      InkWell(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => Product_Details(
+                                    name: name[index],
+                                    productid: cartitems[index],
+                                    imageUrl: image[index]),
+                              ));
+                        },
+                        child: SizedBox(
+                          width: MediaQuery.of(context).size.width,
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                              top: 30,
                             ),
-                            Expanded(
-                              child: Text(
-                                name[index],
-                                overflow: TextOverflow.ellipsis,
-                                style: GoogleFonts.nunitoSans(
-                                  fontWeight: FontWeight.w600,
+                            child: Column(
+                              children: [
+                                Row(
+                                  children: [
+                                    Image(
+                                      image: NetworkImage(image[index]),
+                                      height: 100,
+                                      width: 100,
+                                    ),
+                                    Expanded(
+                                      child: Text(
+                                        name[index],
+                                        overflow: TextOverflow.ellipsis,
+                                        style: GoogleFonts.nunitoSans(
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                        maxLines: 1,
+                                      ),
+                                    )
+                                  ],
                                 ),
-                                maxLines: 1,
-                              ),
-                            )
-                          ],
-                        )
-                      ],
-                    ),
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 120),
+                                  child: Row(
+                                    children: [
+                                      Text('₹${price[index]}',
+                                          style: GoogleFonts.nunitoSans(
+                                              fontWeight: FontWeight.bold))
+                                    ],
+                                  ),
+                                ),
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.only(left: 120, top: 10),
+                                  child: Row(
+                                    children: [
+                                      avaliability[index]
+                                          ? Text(
+                                              'In Stock',
+                                              style: GoogleFonts.nunitoSans(
+                                                  color: Colors.green,
+                                                  fontWeight: FontWeight.w600),
+                                            )
+                                          : Text('Out of Stock',
+                                              style: GoogleFonts.nunitoSans(
+                                                  color: Colors.red,
+                                                  fontWeight: FontWeight.w600))
+                                    ],
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      )
+                    ],
+                  );
+                },
+              ),
+            )
+          : Column(
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(
+                      top: MediaQuery.of(context).size.height / 2.5),
+                ),
+                const Center(
+                  child: CircularProgressIndicator(
+                    color: Colors.black,
                   ),
                 )
               ],
-            );
-          },
-        ),
-      ),
+            ),
     );
   }
 }
