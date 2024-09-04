@@ -97,8 +97,7 @@ class _CartPageState extends State<CartPage> {
                                 style: GoogleFonts.nunitoSans(
                                   fontWeight: FontWeight.w600,
                                 ),
-                                maxLines:
-                                    1, // Ensures text does not wrap and only one line is shown
+                                maxLines: 1,
                               ),
                             )
                           ],
