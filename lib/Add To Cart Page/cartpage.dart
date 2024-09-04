@@ -33,6 +33,8 @@ class _CartPageState extends State<CartPage> {
   List<dynamic> image = [];
   List<bool> avaliability = [];
   bool isloaded = false;
+  double total = 0.0;
+  bool isavaliable = true;
   Future<void> fetchcartproductdetails() async {
     await fetchcartdetails();
 
@@ -42,12 +44,37 @@ class _CartPageState extends State<CartPage> {
       if (docsnap.exists) {
         setState(() {
           name.add(docsnap.data()?['name']);
-          price.add(docsnap.data()?['Price']);
+          price.add(int.parse(docsnap.data()?['Price']));
           image.add(docsnap.data()?['Product Image']);
           avaliability.add(docsnap.data()?['Avaliable']);
           isloaded = true;
         });
       }
+      for (int i = 0; i < avaliability.length; i++) {
+        if (avaliability[i]) {
+          setState(() {
+            total += price[i];
+          });
+        }
+      }
+      int count = 0;
+      for (int j = 0; j < avaliability.length; j++) {
+        if (avaliability[j] == false) {
+          count += 1;
+        }
+      }
+      print(count);
+      if (count == avaliability.length) {
+        setState(() {
+          isavaliable = false;
+        });
+      } else {
+        setState(() {
+          isavaliable = true;
+        });
+      }
+      // print('Avaliable: $isavaliable');
+      // print('total $total');
       // print('Name $name');
       // print('Price $price');
       // print('Image $image');
@@ -61,11 +88,53 @@ class _CartPageState extends State<CartPage> {
     super.initState();
     fetchcartdetails();
     fetchcartproductdetails();
+    // calculateTotalPrice();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      bottomNavigationBar: BottomAppBar(
+        child: Container(
+          // color: Colors.white,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Row(
+                children: [
+                  Text(
+                    '₹$total',
+                    style: GoogleFonts.nunitoSans(
+                        color: Colors.black,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600),
+                  ),
+                  const Spacer(),
+                  InkWell(
+                    onTap: () async {},
+                    child: Container(
+                      width: 150,
+                      height: 50,
+                      decoration: BoxDecoration(
+                          color: isavaliable ? Colors.green : Colors.grey,
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(10))),
+                      child: Center(
+                        child: Text(
+                          isavaliable ? 'Buy Now' : 'Out Of Stock',
+                          style: GoogleFonts.nunitoSans(
+                              color: Colors.black, fontWeight: FontWeight.w600),
+                        ),
+                      ),
+                    ),
+                  )
+                ],
+              )
+            ],
+          ),
+        ),
+      ),
       appBar: AppBar(
         title: Text(
           'My Cart',

@@ -169,9 +169,13 @@ class _HomePageState extends State<HomePage> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   int totalcart = 0;
   Future<void> fetchcartdetails() async {
+    // Add a 10-second delay before executing the rest of the code
+    await Future.delayed(Duration(seconds: 10));
+
     final user = _auth.currentUser;
     final docsnap =
         await _firestore.collection('Cart Items').doc(user!.uid).get();
+
     if (docsnap.exists) {
       setState(() {
         cartitems = docsnap.data()?['Product ID'];
