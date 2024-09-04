@@ -49,13 +49,7 @@ class _Product_DetailsState extends State<Product_Details> {
   Future<void> uploadproductimage() async {
     await _firestore.collection('sneakers').doc(widget.productid).update({
       'Product Image': widget.imageUrl,
-      'UK 6': true,
-      'UK 7': false,
-      'UK 8': true,
-      'UK 9': true,
-      'UK 10': false,
-      'UK 11': true,
-      'UK 12': false
+      'Avaliable': true,
     });
   }
 
@@ -176,7 +170,7 @@ class _Product_DetailsState extends State<Product_Details> {
     super.initState();
     fetchprice();
     fetchshoesizes();
-    // uploadproductimage();
+    uploadproductimage();
     fetchcartdetails();
     fetchlikedetails();
     fetchgeminiresponse();

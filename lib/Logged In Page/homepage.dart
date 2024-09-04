@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:luxelayers/Add%20To%20Cart%20Page/cartpage.dart';
 import 'package:luxelayers/Login%20and%20Signup%20Page/getstarted.dart';
 import 'package:luxelayers/Sneakers%20Category/Slides.dart';
 import 'package:luxelayers/Sneakers%20Category/dunks.dart';
@@ -197,7 +198,13 @@ class _HomePageState extends State<HomePage> {
                   clipBehavior: Clip.none,
                   children: [
                     InkWell(
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const CartPage(),
+                            ));
+                      },
                       child: const Icon(
                         CupertinoIcons.bag,
                         color: Colors.black,
