@@ -154,34 +154,36 @@ class _CartPageState extends State<CartPage> {
                   const Spacer(),
                   InkWell(
                     onTap: () async {
-                      Razorpay razorpay = Razorpay();
-                      var options = {
-                        'key': Environment.keyid,
-                        'amount': ((total +
-                                    (total > 14000.0 ? 0 : 500) +
-                                    (total * 0.12)) *
-                                100)
-                            .toStringAsFixed(2),
-                        'name': 'LuxeLayers',
-                        'description':
-                            'Order #${DateTime.now().toIso8601String()}',
-                        'retry': {'enabled': true, 'max_count': 1},
-                        'send_sms_hash': true,
-                        'prefill': {
-                          // 'contact': '',
-                          'email': _auth.currentUser!.email
-                        },
-                        'external': {
-                          'wallets': ['paytm']
-                        }
-                      };
-                      razorpay.on(Razorpay.EVENT_PAYMENT_ERROR,
-                          handlePaymentErrorResponse);
-                      razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS,
-                          handlePaymentSuccessResponse);
-                      razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET,
-                          handleExternalWalletSelected);
-                      razorpay.open(options);
+                      if (cartitems.isNotEmpty && isavaliable) {
+                        Razorpay razorpay = Razorpay();
+                        var options = {
+                          'key': Environment.keyid,
+                          'amount': ((total +
+                                      (total > 14000.0 ? 0 : 500) +
+                                      (total * 0.12)) *
+                                  100)
+                              .toStringAsFixed(2),
+                          'name': 'LuxeLayers',
+                          'description':
+                              'Order #${DateTime.now().toIso8601String()}',
+                          'retry': {'enabled': true, 'max_count': 1},
+                          'send_sms_hash': true,
+                          'prefill': {
+                            // 'contact': '',
+                            'email': _auth.currentUser!.email
+                          },
+                          'external': {
+                            'wallets': ['paytm']
+                          }
+                        };
+                        razorpay.on(Razorpay.EVENT_PAYMENT_ERROR,
+                            handlePaymentErrorResponse);
+                        razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS,
+                            handlePaymentSuccessResponse);
+                        razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET,
+                            handleExternalWalletSelected);
+                        razorpay.open(options);
+                      }
                     },
                     child: Container(
                       width: 150,

@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:luxelayers/Add%20To%20Cart%20Page/cartpage.dart';
 import 'package:luxelayers/Login%20and%20Signup%20Page/getstarted.dart';
+import 'package:luxelayers/Order%20Page/orderpage.dart';
 import 'package:luxelayers/Sneakers%20Category/Slides.dart';
 import 'package:luxelayers/Sneakers%20Category/dunks.dart';
 import 'package:luxelayers/Sneakers%20Category/jordan.dart';
@@ -195,6 +196,22 @@ class _HomePageState extends State<HomePage> {
             padding: const EdgeInsets.only(right: 20),
             child: Row(
               children: [
+                InkWell(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const MyOrders(),
+                        ));
+                  },
+                  child: const Icon(
+                    Icons.wallet_giftcard_rounded,
+                    color: Colors.black,
+                  ),
+                ),
+                const SizedBox(
+                  width: 10,
+                ),
                 Stack(
                   clipBehavior: Clip.none,
                   children: [
@@ -207,7 +224,7 @@ class _HomePageState extends State<HomePage> {
                             ));
                       },
                       child: const Icon(
-                        CupertinoIcons.bag,
+                        CupertinoIcons.cart,
                         color: Colors.black,
                         size: 30.0, // Adjust size if necessary
                       ),
