@@ -2,8 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:luxelayers/Environmental%20Variables/.env.dart';
 import 'package:luxelayers/Logged%20In%20Page/homepage.dart';
 import 'package:luxelayers/Sneaker%20Detail%20Page/productdetails.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
+import 'dart:math';
 
 class CartPage extends StatefulWidget {
   const CartPage({super.key});
@@ -92,6 +95,43 @@ class _CartPageState extends State<CartPage> {
     // calculateTotalPrice();
   }
 
+  void handlePaymentErrorResponse(PaymentFailureResponse response) {
+    /*
+    * PaymentFailureResponse contains three values:
+    * 1. Error Code
+    * 2. Error Description
+    * 3. Metadata
+    * */
+    // showAlertDialog(context, "Payment Failed", "Code: ${response.code}\nDescription: ${response.message}\nMetadata:${response.error.toString()}");
+  }
+
+  void handlePaymentSuccessResponse(PaymentSuccessResponse response) async {
+    final random = Random();
+    int number = 100000 + random.nextInt(900000);
+    String orderid = 'CT${number}';
+    final user = _auth.currentUser;
+    await _firestore.collection('Order IDs').doc(user!.uid).set({
+      'IDs': FieldValue.arrayUnion([orderid])
+    }, SetOptions(merge: true));
+    await _firestore.collection('Order Details').doc(orderid).set({
+      'Name': name,
+      'Price': price,
+      'Product Image': image,
+      'Total': (total + (total > 14000.0 ? 0 : 500) + (total * 0.12))
+          .toStringAsFixed(2),
+      'Order ID': orderid,
+      'Delivered': false
+    });
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => HomePage(),
+        ));
+  }
+
+  void handleExternalWalletSelected(ExternalWalletResponse response) {
+    // showAlertDialog(context, "External Wallet Selected", "${response.walletName}");
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -105,7 +145,7 @@ class _CartPageState extends State<CartPage> {
               Row(
                 children: [
                   Text(
-                    '₹$total',
+                    '₹${(total + (total > 14000.0 ? 0 : 500) + (total * 0.12)).toStringAsFixed(2)}',
                     style: GoogleFonts.nunitoSans(
                         color: Colors.black,
                         fontSize: 20,
@@ -113,7 +153,36 @@ class _CartPageState extends State<CartPage> {
                   ),
                   const Spacer(),
                   InkWell(
-                    onTap: () async {},
+                    onTap: () async {
+                      Razorpay razorpay = Razorpay();
+                      var options = {
+                        'key': Environment.keyid,
+                        'amount': ((total +
+                                    (total > 14000.0 ? 0 : 500) +
+                                    (total * 0.12)) *
+                                100)
+                            .toStringAsFixed(2),
+                        'name': 'LuxeLayers',
+                        'description':
+                            'Order #${DateTime.now().toIso8601String()}',
+                        'retry': {'enabled': true, 'max_count': 1},
+                        'send_sms_hash': true,
+                        'prefill': {
+                          // 'contact': '',
+                          'email': _auth.currentUser!.email
+                        },
+                        'external': {
+                          'wallets': ['paytm']
+                        }
+                      };
+                      razorpay.on(Razorpay.EVENT_PAYMENT_ERROR,
+                          handlePaymentErrorResponse);
+                      razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS,
+                          handlePaymentSuccessResponse);
+                      razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET,
+                          handleExternalWalletSelected);
+                      razorpay.open(options);
+                    },
                     child: Container(
                       width: 150,
                       height: 50,
@@ -147,7 +216,7 @@ class _CartPageState extends State<CartPage> {
       appBar: AppBar(
         title: Text(
           'My Cart',
-          style: GoogleFonts.nunitoSans(),
+          style: GoogleFonts.nunitoSans(fontWeight: FontWeight.bold),
         ),
       ),
       body: isloaded
