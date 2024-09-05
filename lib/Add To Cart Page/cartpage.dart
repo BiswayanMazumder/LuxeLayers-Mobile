@@ -63,7 +63,7 @@ class _CartPageState extends State<CartPage> {
           count += 1;
         }
       }
-      print(count);
+      // print(count);
       if (count == avaliability.length) {
         setState(() {
           isavaliable = false;
@@ -212,7 +212,47 @@ class _CartPageState extends State<CartPage> {
                                           : Text('Out of Stock',
                                               style: GoogleFonts.nunitoSans(
                                                   color: Colors.red,
-                                                  fontWeight: FontWeight.w600))
+                                                  fontWeight: FontWeight.w600)),
+                                      const SizedBox(
+                                        width: 20,
+                                      ),
+                                      InkWell(
+                                        onTap: () async {
+                                          // print(
+                                          //     "Removing item: ${cartitems[index]}");
+
+                                          final user = _auth.currentUser;
+                                          final docRef = _firestore
+                                              .collection('Cart Items')
+                                              .doc(user!.uid);
+
+                                          // Fetch the current data to see what the document contains
+                                          final docSnapshot =
+                                              await docRef.get();
+                                          if (docSnapshot.exists) {
+                                            // print(
+                                            //     "Current Cart Items: ${docSnapshot.data()}");
+                                          } else {
+                                            // print("Document does not exist.");
+                                          }
+
+                                          // Remove the item from the array
+                                          await docRef.set({
+                                            'Product ID':
+                                                FieldValue.arrayRemove(
+                                                    [cartitems[index]])
+                                          }, SetOptions(merge: true));
+
+                                          print(
+                                              "Item removed. Fetching updated cart details.");
+                                          // await fetchcartdetails();
+                                          await fetchcartproductdetails();
+                                        },
+                                        child: Text('Remove Item',
+                                            style: GoogleFonts.nunitoSans(
+                                                color: Colors.red,
+                                                fontWeight: FontWeight.w600)),
+                                      )
                                     ],
                                   ),
                                 )
