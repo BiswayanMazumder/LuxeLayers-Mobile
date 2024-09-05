@@ -302,44 +302,113 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(height: 30),
             SizedBox(
               height: 200,
-              width: MediaQuery.of(context).size.width * 0.9,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(20.0),
-                child: PageView.builder(
-                  itemCount: imageUrls.length,
-                  itemBuilder: (context, index) {
-                    return InkWell(
-                      onTap: () {
-                        if (index == 0) {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const JordanPage(),
-                              ));
-                        } else if (index == 1) {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const SlidesPage(),
-                              ));
-                        } else if (index == 2) {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const DunksPage(),
-                              ));
-                        }
-                      },
-                      child: Image.network(
-                        imageUrls[index],
-                        fit: BoxFit.fill,
-                      ),
-                    );
-                  },
+              width: MediaQuery.of(context).size.width,
+              child: Padding(
+                padding: const EdgeInsets.only(left: 25, right: 25),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(20.0),
+                  child: PageView.builder(
+                    itemCount: imageUrls.length,
+                    itemBuilder: (context, index) {
+                      return InkWell(
+                        onTap: () {
+                          if (index == 0) {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const JordanPage(),
+                                ));
+                          } else if (index == 1) {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const SlidesPage(),
+                                ));
+                          } else if (index == 2) {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const DunksPage(),
+                                ));
+                          }
+                        },
+                        child: Image.network(
+                          imageUrls[index],
+                          fit: BoxFit.fill,
+                        ),
+                      );
+                    },
+                  ),
                 ),
               ),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 30),
+            Center(
+              child: Text(
+                'Stay Tuned...',
+                style: GoogleFonts.nunitoSans(
+                    fontWeight: FontWeight.bold, fontSize: 18),
+              ),
+            ),
+            const Padding(
+              padding: EdgeInsets.all(25.0),
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    InkWell(
+                      child: CircleAvatar(
+                        backgroundImage: NetworkImage(
+                            'https://images.vegnonveg.com/resized/700X573/11428/air-jordan-4-retro-blackwhite-black-66c718d11e771.jpg'),
+                        radius: 35,
+                      ),
+                    ),
+                    SizedBox(width: 40),
+                    InkWell(
+                      child: CircleAvatar(
+                        backgroundImage: NetworkImage(
+                            'https://images.vegnonveg.com/resized/700X573/11473/air-max-90-drift-action-greenblack-summit-white-green-66c6f5a6b95b7.jpg'),
+                        radius: 35,
+                      ),
+                    ),
+                    SizedBox(width: 40),
+                    InkWell(
+                      child: CircleAvatar(
+                        backgroundImage: NetworkImage(
+                            'https://images.vegnonveg.com/resized/700X573/11478/cortez-blackdark-smoke-grey-black-66c719e4c838e.jpg'),
+                        radius: 35,
+                      ),
+                    ),
+                    SizedBox(width: 40),
+                    InkWell(
+                      child: CircleAvatar(
+                        backgroundImage: NetworkImage(
+                            'https://images.vegnonveg.com/resized/700X573/11475/air-force-1-07-whitedragon-red-white-white-66c717cce8961.jpg'),
+                        radius: 35,
+                      ),
+                    ),
+                    SizedBox(width: 40),
+                    InkWell(
+                      child: CircleAvatar(
+                        backgroundImage: NetworkImage(
+                            'https://images.vegnonveg.com/resized/700X573/11477/killshot-2-phantomuniversity-gold-gum-medium-brown-multicolor-66c719921548d.jpg'),
+                        radius: 35,
+                      ),
+                    ),
+                    SizedBox(width: 40),
+                    InkWell(
+                      child: CircleAvatar(
+                        backgroundImage: NetworkImage(
+                            'https://images.vegnonveg.com/resized/700X573/11417/gel-quantum-360-viii-blackfiery-red-black-66b3610d4657e.jpg'),
+                        radius: 35,
+                      ),
+                    ),
+                    SizedBox(width: 10),
+                  ],
+                ),
+              ),
+            ),
+            // const SizedBox(height: 3),
             Padding(
               padding: const EdgeInsets.all(20.0),
               child: Row(
