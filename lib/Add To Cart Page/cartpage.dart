@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:luxelayers/Logged%20In%20Page/homepage.dart';
 import 'package:luxelayers/Sneaker%20Detail%20Page/productdetails.dart';
 
 class CartPage extends StatefulWidget {
@@ -117,12 +118,20 @@ class _CartPageState extends State<CartPage> {
                       width: 150,
                       height: 50,
                       decoration: BoxDecoration(
-                          color: isavaliable ? Colors.green : Colors.grey,
+                          color: cartitems.length > 0
+                              ? isavaliable
+                                  ? Colors.green
+                                  : Colors.grey
+                              : Colors.grey,
                           borderRadius:
                               const BorderRadius.all(Radius.circular(10))),
                       child: Center(
                         child: Text(
-                          isavaliable ? 'Buy Now' : 'Out Of Stock',
+                          cartitems.length > 0
+                              ? isavaliable
+                                  ? 'Buy Now'
+                                  : 'Out Of Stock'
+                              : 'No Products In Cart',
                           style: GoogleFonts.nunitoSans(
                               color: Colors.black, fontWeight: FontWeight.w600),
                         ),
@@ -246,7 +255,12 @@ class _CartPageState extends State<CartPage> {
                                           print(
                                               "Item removed. Fetching updated cart details.");
                                           // await fetchcartdetails();
-                                          await fetchcartproductdetails();
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    HomePage(),
+                                              ));
                                         },
                                         child: Text('Remove Item',
                                             style: GoogleFonts.nunitoSans(
