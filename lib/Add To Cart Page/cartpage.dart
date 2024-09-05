@@ -151,134 +151,232 @@ class _CartPageState extends State<CartPage> {
         ),
       ),
       body: isloaded
-          ? Padding(
-              padding: const EdgeInsets.only(top: 10, left: 20),
-              child: ListView.builder(
-                itemCount: cartitems.length,
-                itemBuilder: (context, index) {
-                  return Column(
-                    children: [
-                      InkWell(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => Product_Details(
-                                    name: name[index],
-                                    productid: cartitems[index],
-                                    imageUrl: image[index]),
-                              ));
-                        },
-                        child: SizedBox(
-                          width: MediaQuery.of(context).size.width,
-                          child: Padding(
-                            padding: const EdgeInsets.only(
-                              top: 30,
-                            ),
-                            child: Column(
-                              children: [
-                                Row(
-                                  children: [
-                                    Image(
-                                      image: NetworkImage(image[index]),
-                                      height: 100,
-                                      width: 100,
+          ? Column(
+              children: [
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 10, left: 20),
+                    child: ListView.builder(
+                      itemCount: cartitems.length,
+                      itemBuilder: (context, index) {
+                        return Column(
+                          children: [
+                            InkWell(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => Product_Details(
+                                      name: name[index],
+                                      productid: cartitems[index],
+                                      imageUrl: image[index],
                                     ),
-                                    Expanded(
-                                      child: Text(
-                                        name[index],
-                                        overflow: TextOverflow.ellipsis,
-                                        style: GoogleFonts.nunitoSans(
-                                          fontWeight: FontWeight.w600,
+                                  ),
+                                );
+                              },
+                              child: SizedBox(
+                                width: MediaQuery.of(context).size.width,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(top: 30),
+                                  child: Column(
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Image(
+                                            image: NetworkImage(image[index]),
+                                            height: 100,
+                                            width: 100,
+                                          ),
+                                          Expanded(
+                                            child: Text(
+                                              name[index],
+                                              overflow: TextOverflow.ellipsis,
+                                              style: GoogleFonts.nunitoSans(
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                              maxLines: 1,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(left: 120),
+                                        child: Row(
+                                          children: [
+                                            Text(
+                                              '₹${price[index]}',
+                                              style: GoogleFonts.nunitoSans(
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ],
                                         ),
-                                        maxLines: 1,
                                       ),
-                                    )
-                                  ],
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 120),
-                                  child: Row(
-                                    children: [
-                                      Text('₹${price[index]}',
-                                          style: GoogleFonts.nunitoSans(
-                                              fontWeight: FontWeight.bold))
-                                    ],
-                                  ),
-                                ),
-                                Padding(
-                                  padding:
-                                      const EdgeInsets.only(left: 120, top: 10),
-                                  child: Row(
-                                    children: [
-                                      avaliability[index]
-                                          ? Text(
-                                              'In Stock',
-                                              style: GoogleFonts.nunitoSans(
-                                                  color: Colors.green,
-                                                  fontWeight: FontWeight.w600),
-                                            )
-                                          : Text('Out of Stock',
-                                              style: GoogleFonts.nunitoSans(
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 120, top: 10),
+                                        child: Row(
+                                          children: [
+                                            avaliability[index]
+                                                ? Text(
+                                                    'In Stock',
+                                                    style:
+                                                        GoogleFonts.nunitoSans(
+                                                      color: Colors.green,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                    ),
+                                                  )
+                                                : Text(
+                                                    'Out of Stock',
+                                                    style:
+                                                        GoogleFonts.nunitoSans(
+                                                      color: Colors.red,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                    ),
+                                                  ),
+                                            const SizedBox(width: 20),
+                                            InkWell(
+                                              onTap: () async {
+                                                final user = _auth.currentUser;
+                                                final docRef = _firestore
+                                                    .collection('Cart Items')
+                                                    .doc(user!.uid);
+
+                                                final docSnapshot =
+                                                    await docRef.get();
+                                                if (docSnapshot.exists) {
+                                                  // Handle existing document
+                                                } else {
+                                                  // Handle non-existing document
+                                                }
+
+                                                await docRef.set({
+                                                  'Product ID':
+                                                      FieldValue.arrayRemove(
+                                                          [cartitems[index]])
+                                                }, SetOptions(merge: true));
+
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        HomePage(),
+                                                  ),
+                                                );
+                                              },
+                                              child: Text(
+                                                'Remove Item',
+                                                style: GoogleFonts.nunitoSans(
                                                   color: Colors.red,
-                                                  fontWeight: FontWeight.w600)),
-                                      const SizedBox(
-                                        width: 20,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                       ),
-                                      InkWell(
-                                        onTap: () async {
-                                          // print(
-                                          //     "Removing item: ${cartitems[index]}");
-
-                                          final user = _auth.currentUser;
-                                          final docRef = _firestore
-                                              .collection('Cart Items')
-                                              .doc(user!.uid);
-
-                                          // Fetch the current data to see what the document contains
-                                          final docSnapshot =
-                                              await docRef.get();
-                                          if (docSnapshot.exists) {
-                                            // print(
-                                            //     "Current Cart Items: ${docSnapshot.data()}");
-                                          } else {
-                                            // print("Document does not exist.");
-                                          }
-
-                                          // Remove the item from the array
-                                          await docRef.set({
-                                            'Product ID':
-                                                FieldValue.arrayRemove(
-                                                    [cartitems[index]])
-                                          }, SetOptions(merge: true));
-
-                                          print(
-                                              "Item removed. Fetching updated cart details.");
-                                          // await fetchcartdetails();
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    HomePage(),
-                                              ));
-                                        },
-                                        child: Text('Remove Item',
-                                            style: GoogleFonts.nunitoSans(
-                                                color: Colors.red,
-                                                fontWeight: FontWeight.w600)),
-                                      )
                                     ],
                                   ),
-                                )
-                              ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(30.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            'Price',
+                            style: GoogleFonts.nunitoSans(
+                              color: Colors.black,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
-                        ),
-                      )
+                          const Spacer(),
+                          Text(
+                            '₹${total.toString()}0',
+                            style: GoogleFonts.nunitoSans(
+                              color: Colors.black,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      Row(
+                        children: [
+                          Text(
+                            'Delivery',
+                            style: GoogleFonts.nunitoSans(
+                              color: Colors.black,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const Spacer(),
+                          Text(
+                            total > 14000.0 ? '₹0.00' : '₹500.00',
+                            style: GoogleFonts.nunitoSans(
+                              color: Colors.black,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      Row(
+                        children: [
+                          Text(
+                            'Tax',
+                            style: GoogleFonts.nunitoSans(
+                              color: Colors.black,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const Spacer(),
+                          Text(
+                            '₹${(total * 0.12).toStringAsFixed(2)}',
+                            style: GoogleFonts.nunitoSans(
+                              color: Colors.black,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      Row(
+                        children: [
+                          Text(
+                            'Total',
+                            style: GoogleFonts.nunitoSans(
+                              color: Colors.black,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const Spacer(),
+                          Text(
+                            '₹${(total + (total > 14000.0 ? 0 : 500) + (total * 0.12)).toStringAsFixed(2)}',
+                            style: GoogleFonts.nunitoSans(
+                              color: Colors.black,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
                     ],
-                  );
-                },
-              ),
+                  ),
+                ),
+              ],
             )
           : Column(
               children: [
