@@ -13,93 +13,107 @@ class MyOrders extends StatefulWidget {
 class _MyOrdersState extends State<MyOrders> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  List<dynamic> orderids = [];
-  List<dynamic> name = [];
-  List<dynamic> price = [];
-  // List<dynamic> total = [];
-  List<dynamic> image = [];
-  List<bool> status = [];
-  Future<void> fetchorderid() async {
+  String username = '';
+  TextEditingController _searchController = TextEditingController();
+  List<dynamic> allNames = [];
+  List<dynamic> allImages = [];
+  List<dynamic> allPrices = [];
+  List<bool> allStatuses = [];
+
+  Future<void> fetchname() async {
+    final user = _auth.currentUser;
+    final docsnap =
+        await _firestore.collection('User Detail').doc(user!.uid).get();
+    if (docsnap.exists) {
+      setState(() {
+        username = docsnap.data()!['Name'];
+      });
+    }
+    // print(username);
+  }
+
+  Future<void> fetchOrderDetails() async {
     final user = _auth.currentUser;
     final docsnap =
         await _firestore.collection('Order IDs').doc(user!.uid).get();
-    if (docsnap.exists) {
-      setState(() {
-        orderids = docsnap.data()!['IDs'];
-      });
-    }
-    print('order id $orderids');
-  }
+    List<dynamic> orderids = [];
 
-  Future<void> fetchdetails() async {
-    await fetchorderid();
-    final user = _auth.currentUser;
+    if (docsnap.exists) {
+      orderids = docsnap.data()!['IDs'];
+    }
+
+    List<dynamic> names = [];
+    List<dynamic> prices = [];
+    List<dynamic> images = [];
+    List<bool> statuses = [];
 
     for (int i = 0; i < orderids.length; i++) {
-      final docSnap = await _firestore
-          .collection('Order Details')
-          .doc(orderids[i])
-          // .collection('Order $orderids[i]')
-          .get();
+      final docSnap =
+          await _firestore.collection('Order Details').doc(orderids[i]).get();
 
       if (docSnap.exists) {
         final data = docSnap.data()!;
 
         // Handle Name
         if (data['Name'] is List) {
-          // If 'Name' is a list, flatten it
-          final List<String> names = List<String>.from(data['Name']);
-          name.addAll(names);
+          names.addAll(data['Name']);
         } else {
-          // If 'Name' is a single item, add it directly
-          name.add(data['Name']);
+          names.add(data['Name']);
         }
 
         // Handle Price
         if (data['Price'] is List) {
-          // If 'Price' is a list, flatten it
-          final List<int> prices = List<int>.from(data['Price']);
-          price.addAll(prices);
+          prices.addAll(data['Price']);
         } else {
-          // If 'Price' is a single item, add it directly
-          price.add(data['Price']);
+          prices.add(data['Price']);
         }
 
         // Handle Product Image
         if (data['Product Image'] is List) {
-          // If 'Product Image' is a list, flatten it
-          final List<String> images = List<String>.from(data['Product Image']);
-          image.addAll(images);
+          images.addAll(data['Product Image']);
         } else {
-          // If 'Product Image' is a single item, add it directly
-          image.add(data['Product Image']);
+          images.add(data['Product Image']);
         }
 
         // Handle Delivered Status
         if (data['Delivered'] is List) {
-          // If 'Delivered' is a list, flatten it
-          final List<bool> statuses = List<bool>.from(data['Delivered']);
-          status.addAll(statuses);
+          statuses.addAll(data['Delivered']);
         } else {
-          // If 'Delivered' is a single item, add it directly
-          status.add(data['Delivered']);
+          statuses.add(data['Delivered']);
         }
       }
-
-      // Debugging outputs
-      print('name $name');
-      print('price $price');
-      print('image $image');
-      print('status $status');
     }
+
+    setState(() {
+      allNames = names;
+      allPrices = prices;
+      allImages = images;
+      allStatuses = statuses;
+    });
   }
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    fetchorderid();
-    fetchdetails();
+    fetchname();
+    fetchOrderDetails();
+    _searchController.addListener(() {
+      setState(() {}); // Update the UI when the search query changes
+    });
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  List<int> get filteredIndexes {
+    final query = _searchController.text.toLowerCase();
+    return List.generate(allNames.length, (index) {
+      final name = allNames[index].toLowerCase();
+      return name.contains(query) ? index : null;
+    }).where((index) => index != null).cast<int>().toList();
   }
 
   @override
@@ -112,29 +126,110 @@ class _MyOrdersState extends State<MyOrders> {
             fontWeight: FontWeight.bold,
           ),
         ),
+        bottom: PreferredSize(
+          preferredSize: Size.fromHeight(80), // Adjust height for the TextField
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 25.0,
+            ),
+            child: TextField(
+              controller: _searchController,
+              decoration: InputDecoration(
+                hintText: 'Search orders...',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                prefixIcon: const Icon(Icons.search),
+                contentPadding: const EdgeInsets.symmetric(
+                    vertical: 12.0), // Adjust height by padding
+              ),
+            ),
+          ),
+        ),
       ),
       body: Padding(
-        padding: const EdgeInsets.only(left: 30, right: 30, top: 30),
-        child: ListView.builder(
-          itemCount: name.length,
-          itemBuilder: (context, index) {
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 80),
-              child: Column(
-                children: [
-                  Text(
-                    name[index],
-                    overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.nunitoSans(
-                      fontWeight: FontWeight.w600,
+        padding: const EdgeInsets.only(left: 25, right: 25, top: 50),
+        child: allNames.isEmpty
+            ? const Center(
+                child: CircularProgressIndicator(
+                color: Colors.orangeAccent,
+              ))
+            : filteredIndexes.isEmpty
+                ? Center(
+                    child: Text(
+                      'No orders found.',
+                      style: GoogleFonts.nunitoSans(),
                     ),
-                    maxLines: 1,
+                  )
+                : ListView.builder(
+                    itemCount: filteredIndexes.length,
+                    itemBuilder: (context, index) {
+                      final idx = filteredIndexes[index];
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 80),
+                        child: Row(
+                          children: [
+                            if (allImages.length > idx)
+                              Image.network(
+                                allImages[idx] as String,
+                                width: 100,
+                                height: 100,
+                                fit: BoxFit.cover,
+                              ),
+                            SizedBox(width: 10),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    allNames[idx] as String,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: GoogleFonts.nunitoSans(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    maxLines: 1,
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 10),
+                                    child: Text(
+                                      '₹${allPrices[idx].toString()}',
+                                      overflow: TextOverflow.ellipsis,
+                                      style: GoogleFonts.nunitoSans(
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                      maxLines: 1,
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 10),
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(20),
+                                        border: Border.all(
+                                            color: Colors.grey, width: 1),
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(5.0),
+                                        child: Text(
+                                          'Ordered By $username',
+                                          overflow: TextOverflow.ellipsis,
+                                          style: GoogleFonts.nunitoSans(
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 10,
+                                          ),
+                                          maxLines: 1,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
                   ),
-                ],
-              ),
-            );
-          },
-        ),
       ),
     );
   }
