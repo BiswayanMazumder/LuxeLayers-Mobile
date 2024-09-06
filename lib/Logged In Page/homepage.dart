@@ -147,7 +147,6 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     fetchcartdetails();
-    // TODO: implement initState
     super.initState();
     for (int i = 0; i < jordans.length; i++) {
       sneakerimages.add(jordans[i]);
@@ -196,22 +195,20 @@ class _HomePageState extends State<HomePage> {
             padding: const EdgeInsets.only(right: 20),
             child: Row(
               children: [
-                InkWell(
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const MyOrders(),
-                        ));
-                  },
-                  child: const Icon(
-                    Icons.person,
-                    color: Colors.black,
-                  ),
-                ),
-                const SizedBox(
-                  width: 10,
-                ),
+                // InkWell(
+                //   onTap: () {
+                //     Navigator.push(
+                //         context,
+                //         MaterialPageRoute(
+                //           builder: (context) => const MyOrders(),
+                //         ));
+                //   },
+                //   child: const Icon(
+                //     Icons.person,
+                //     color: Colors.black,
+                //   ),
+                // ),
+
                 Stack(
                   clipBehavior: Clip.none,
                   children: [

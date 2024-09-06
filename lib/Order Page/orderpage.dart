@@ -120,6 +120,7 @@ class _MyOrdersState extends State<MyOrders> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: Text(
           'My Orders',
           style: GoogleFonts.nunitoSans(
@@ -178,51 +179,54 @@ class _MyOrdersState extends State<MyOrders> {
                               ),
                             SizedBox(width: 10),
                             Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    allNames[idx] as String,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: GoogleFonts.nunitoSans(
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                    maxLines: 1,
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(top: 10),
-                                    child: Text(
-                                      '₹${allPrices[idx].toString()}',
+                              child: InkWell(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      allNames[idx] as String,
                                       overflow: TextOverflow.ellipsis,
                                       style: GoogleFonts.nunitoSans(
-                                        fontWeight: FontWeight.w600,
+                                        fontWeight: FontWeight.bold,
                                       ),
                                       maxLines: 1,
                                     ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(top: 10),
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(20),
-                                        border: Border.all(
-                                            color: Colors.grey, width: 1),
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 10),
+                                      child: Text(
+                                        '₹${allPrices[idx].toString()}',
+                                        overflow: TextOverflow.ellipsis,
+                                        style: GoogleFonts.nunitoSans(
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                        maxLines: 1,
                                       ),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(5.0),
-                                        child: Text(
-                                          'Ordered By $username',
-                                          overflow: TextOverflow.ellipsis,
-                                          style: GoogleFonts.nunitoSans(
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 10,
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 10),
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                          border: Border.all(
+                                              color: Colors.grey, width: 1),
+                                        ),
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(5.0),
+                                          child: Text(
+                                            'Ordered By $username',
+                                            overflow: TextOverflow.ellipsis,
+                                            style: GoogleFonts.nunitoSans(
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 10,
+                                            ),
+                                            maxLines: 1,
                                           ),
-                                          maxLines: 1,
                                         ),
                                       ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                             ),
                           ],

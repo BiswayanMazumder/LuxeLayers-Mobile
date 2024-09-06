@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:luxelayers/Environmental%20Variables/.env.dart';
 import 'package:luxelayers/Logged%20In%20Page/homepage.dart';
+import 'package:luxelayers/Navbar/navbar.dart';
 import 'package:luxelayers/Sneaker%20Detail%20Page/productdetails.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'dart:math';
@@ -125,7 +126,7 @@ class _CartPageState extends State<CartPage> {
     Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => HomePage(),
+          builder: (context) => NavBar(),
         ));
   }
 
@@ -189,7 +190,7 @@ class _CartPageState extends State<CartPage> {
                       width: 150,
                       height: 50,
                       decoration: BoxDecoration(
-                          color: cartitems.length > 0
+                          color: cartitems.isNotEmpty
                               ? isavaliable
                                   ? Colors.green
                                   : Colors.grey
@@ -198,7 +199,7 @@ class _CartPageState extends State<CartPage> {
                               const BorderRadius.all(Radius.circular(10))),
                       child: Center(
                         child: Text(
-                          cartitems.length > 0
+                          cartitems.isNotEmpty
                               ? isavaliable
                                   ? 'Buy Now'
                                   : 'Out Of Stock'
@@ -216,6 +217,7 @@ class _CartPageState extends State<CartPage> {
         ),
       ),
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: Text(
           'My Cart',
           style: GoogleFonts.nunitoSans(fontWeight: FontWeight.bold),
@@ -334,7 +336,7 @@ class _CartPageState extends State<CartPage> {
                                                   context,
                                                   MaterialPageRoute(
                                                     builder: (context) =>
-                                                        HomePage(),
+                                                        NavBar(),
                                                   ),
                                                 );
                                               },
