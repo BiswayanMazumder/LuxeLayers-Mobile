@@ -152,7 +152,7 @@ class _MyOrdersState extends State<MyOrders> {
         child: allNames.isEmpty
             ? const Center(
                 child: CircularProgressIndicator(
-                color: Colors.orangeAccent,
+                color: Colors.black,
               ))
             : filteredIndexes.isEmpty
                 ? Center(

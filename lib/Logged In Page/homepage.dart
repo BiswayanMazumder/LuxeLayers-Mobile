@@ -205,7 +205,7 @@ class _HomePageState extends State<HomePage> {
                         ));
                   },
                   child: const Icon(
-                    Icons.wallet_giftcard_rounded,
+                    Icons.person,
                     color: Colors.black,
                   ),
                 ),
@@ -294,28 +294,28 @@ class _HomePageState extends State<HomePage> {
           crossAxisAlignment:
               CrossAxisAlignment.start, // Align items to the start
           children: [
-            const SizedBox(height: 30),
-            Center(
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.all(Radius.circular(10)),
-                  border: Border.all(color: Colors.black),
-                ),
-                width: MediaQuery.of(context).size.width * 0.9,
-                height: 50,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                  child: TextField(
-                    style: GoogleFonts.nunitoSans(),
-                    decoration: const InputDecoration(
-                      suffixIcon: Icon(Icons.search, color: Colors.black),
-                      hintText: 'Search',
-                      border: InputBorder.none,
-                    ),
-                  ),
-                ),
-              ),
-            ),
+            // const SizedBox(height: 30),
+            // Center(
+            //   child: Container(
+            //     decoration: BoxDecoration(
+            //       borderRadius: const BorderRadius.all(Radius.circular(10)),
+            //       border: Border.all(color: Colors.black),
+            //     ),
+            //     width: MediaQuery.of(context).size.width * 0.9,
+            //     height: 50,
+            //     child: Padding(
+            //       padding: const EdgeInsets.symmetric(horizontal: 10.0),
+            //       child: TextField(
+            //         style: GoogleFonts.nunitoSans(),
+            //         decoration: const InputDecoration(
+            //           suffixIcon: Icon(Icons.search, color: Colors.black),
+            //           hintText: 'Search',
+            //           border: InputBorder.none,
+            //         ),
+            //       ),
+            //     ),
+            //   ),
+            // ),
             const SizedBox(height: 30),
             SizedBox(
               height: 200,
