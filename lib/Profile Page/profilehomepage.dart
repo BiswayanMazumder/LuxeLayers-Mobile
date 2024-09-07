@@ -160,9 +160,69 @@ class _ProfilePageState extends State<ProfilePage> {
               const SizedBox(
                 height: 20,
               ),
-              Container(
-                width: MediaQuery.sizeOf(context).width,
-              )
+              Padding(
+                padding: const EdgeInsets.all(25.0),
+                child: GestureDetector(
+                  onTap: () async {
+                    try {
+                      await _auth.currentUser!.sendEmailVerification();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          backgroundColor: Colors.green,
+                          content: Text(
+                            'Verification email sent',
+                            style: GoogleFonts.nunitoSans(),
+                          ),
+                        ),
+                      );
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          backgroundColor: Colors.red,
+                          content: Text(
+                            'Error sending verification mail',
+                            style: GoogleFonts.nunitoSans(),
+                          ),
+                        ),
+                      );
+                    }
+                  },
+                  child: RichText(
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: 'Please ',
+                          style: GoogleFonts.nunitoSans(
+                            color: Colors.black,
+                            fontWeight: FontWeight.normal,
+                            fontSize: 16, // Adjust font size as needed
+                          ),
+                        ),
+                        TextSpan(
+                          text: 'verify',
+                          style: GoogleFonts.nunitoSans(
+                            color: Colors.red,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16, // Adjust font size as needed
+                          ),
+                        ),
+                        TextSpan(
+                          text: ' your email to make any changes',
+                          style: GoogleFonts.nunitoSans(
+                            color: Colors.black,
+                            fontWeight: FontWeight.normal,
+                            fontSize: 16, // Adjust font size as needed
+                          ),
+                        ),
+                      ],
+                      style: const TextStyle(
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    maxLines: 1,
+                  ),
+                ),
+              ),
             ],
           ),
         ),
