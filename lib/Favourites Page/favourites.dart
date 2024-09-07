@@ -62,7 +62,7 @@ class _FavouritePageState extends State<FavouritePage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          automaticallyImplyLeading: false,
+          // automaticallyImplyLeading: false,
           title: Text(
             "Liked Items",
             style: GoogleFonts.nunitoSans(

@@ -4,6 +4,7 @@ import 'package:luxelayers/Add%20To%20Cart%20Page/cartpage.dart';
 import 'package:luxelayers/Favourites%20Page/favourites.dart';
 import 'package:luxelayers/Logged%20In%20Page/homepage.dart';
 import 'package:luxelayers/Order%20Page/orderpage.dart';
+import 'package:luxelayers/Profile%20Page/profilehomepage.dart';
 
 class NavBar extends StatefulWidget {
   const NavBar({Key? key}) : super(key: key);
@@ -26,7 +27,7 @@ class _NavBarState extends State<NavBar> {
     super.dispose();
   }
 
-  final List screens = [HomePage(), FavouritePage(), CartPage(), MyOrders()];
+  final List screens = [HomePage(), FavouritePage(), CartPage(), ProfilePage()];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -72,7 +73,7 @@ class _NavBarState extends State<NavBar> {
             ),
             GButton(
               icon: Icons.person,
-              text: 'Orders',
+              text: 'Account',
               backgroundColor: Colors.yellow,
               haptic: true,
               debug: true,
