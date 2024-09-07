@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:luxelayers/Login%20and%20Signup%20Page/loginpage.dart';
 import 'package:luxelayers/Login%20and%20Signup%20Page/signuppage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class GetStartedPage extends StatefulWidget {
   const GetStartedPage({super.key});
@@ -11,6 +12,22 @@ class GetStartedPage extends StatefulWidget {
 }
 
 class _GetStartedPageState extends State<GetStartedPage> {
+  int? _selectedindex;
+  void getlanguage() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _selectedindex = prefs.getInt('Language');
+    });
+    print(_selectedindex);
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getlanguage();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,8 +51,10 @@ class _GetStartedPageState extends State<GetStartedPage> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    'Bringing LuxeLayers Members the best products, inspirations and'
-                        ' stories in sports.',
+                    _selectedindex == 0
+                        ? 'Bringing LuxeLayers Members the best products, inspirations and'
+                            ' stories in sports.'
+                        : "लक्सलेयर्स के सदस्यों को खेलों में बेहतरीन उत्पाद, प्रेरणा और कहानियाँ लाना।",
                     style: GoogleFonts.nunitoSans(
                       fontSize: 20,
                       fontWeight: FontWeight.w600,
@@ -47,10 +66,14 @@ class _GetStartedPageState extends State<GetStartedPage> {
                     children: [
                       ElevatedButton(
                           onPressed: () {
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => SignUp(),));
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => SignUp(),
+                                ));
                           },
                           child: Text(
-                            'Join Us',
+                            _selectedindex == 0 ? 'Join Us' : "हमसे जुड़ें",
                             style: GoogleFonts.nunitoSans(
                                 color: Colors.black,
                                 fontWeight: FontWeight.w600,
@@ -61,7 +84,11 @@ class _GetStartedPageState extends State<GetStartedPage> {
                       ),
                       ElevatedButton(
                         onPressed: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage(),));
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => LoginPage(),
+                              ));
                         },
                         style: ButtonStyle(
                           backgroundColor:
@@ -72,7 +99,7 @@ class _GetStartedPageState extends State<GetStartedPage> {
                               MaterialStateProperty.all(0), // Remove shadow
                         ),
                         child: Text(
-                          'Sign In',
+                          _selectedindex == 0 ? 'Sign In' : "साइन",
                           style: GoogleFonts.nunitoSans(
                             color: Colors.white,
                             fontWeight: FontWeight.w600,
