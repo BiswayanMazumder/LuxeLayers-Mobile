@@ -54,6 +54,13 @@ class _Product_DetailsState extends State<Product_Details> {
     });
   }
 
+  Future<void> uploadrecentlyviewed() async {
+    final user = _auth.currentUser;
+    await _firestore.collection('Recently Viewed').doc(user!.uid).set({
+      'Product ID': FieldValue.arrayUnion([widget.productid])
+    }, SetOptions(merge: true));
+  }
+
   final FirebaseAuth _auth = FirebaseAuth.instance;
   List<dynamic> cartitems = [];
   bool iscartadded = false;
@@ -176,6 +183,7 @@ class _Product_DetailsState extends State<Product_Details> {
     fetchlikedetails();
     fetchgeminiresponse();
     fetchreviews();
+    uploadrecentlyviewed();
   }
 
   TextEditingController _review = TextEditingController();
