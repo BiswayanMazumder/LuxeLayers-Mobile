@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:luxelayers/Favourites%20Page/favourites.dart';
 import 'package:luxelayers/Order%20Page/orderpage.dart';
 import 'package:luxelayers/Sneaker%20Detail%20Page/productdetails.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -16,6 +17,7 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  int? _selectedindex;
   List<dynamic> cartitems = [];
   List<dynamic> name = [];
   List<dynamic> price = [];
@@ -81,11 +83,20 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
+  void getlanguage() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _selectedindex = prefs.getInt('Language');
+    });
+    print(_selectedindex);
+  }
+
   @override
   void initState() {
     super.initState();
     fetchName();
     fetchCartProductDetails();
+    getlanguage();
   }
 
   @override
@@ -94,7 +105,7 @@ class _ProfilePageState extends State<ProfilePage> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: Text(
-          'Hey! $username',
+          _selectedindex == 0 ? 'Hey! $username' : 'हाय $username',
           style: GoogleFonts.nunitoSans(
             color: Colors.black,
             fontWeight: FontWeight.w600,
@@ -129,7 +140,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                       child: Center(
                         child: Text(
-                          'Orders',
+                          _selectedindex == 0 ? 'Orders' : 'आर्डर',
                           style: GoogleFonts.nunitoSans(
                             color: Colors.black,
                             fontSize: 15,
@@ -158,7 +169,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                       child: Center(
                         child: Text(
-                          'Wishlist',
+                          _selectedindex == 0 ? 'Wishlist' : 'इच्छा सूची',
                           style: GoogleFonts.nunitoSans(
                             color: Colors.black,
                             fontSize: 15,
@@ -184,7 +195,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                     child: Center(
                       child: Text(
-                        'Account',
+                        _selectedindex == 0 ? 'Account' : 'खाता',
                         style: GoogleFonts.nunitoSans(
                           color: Colors.black,
                           fontSize: 15,
@@ -203,7 +214,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                     child: Center(
                       child: Text(
-                        'Help Center',
+                        _selectedindex == 0 ? 'Help Center' : 'सहायता केंद्र',
                         style: GoogleFonts.nunitoSans(
                           color: Colors.black,
                           fontSize: 15,
@@ -280,10 +291,12 @@ class _ProfilePageState extends State<ProfilePage> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    'Recently Viewed Stores',
+                    _selectedindex == 0
+                        ? 'Recently Viewed Stores'
+                        : '"हाल ही में देखे गए स्टोर"',
                     style: GoogleFonts.nunitoSans(
                       color: Colors.black,
-                      fontWeight: FontWeight.normal,
+                      fontWeight: FontWeight.w600,
                       fontSize: 16,
                     ),
                   ),
@@ -336,6 +349,107 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                 ],
               ),
+              Column(
+                children: [
+                  const SizedBox(
+                    height: 40,
+                  ),
+                  Text(
+                    _selectedindex == 0
+                        ? 'Try LuxeLayers in your language'
+                        : '"LuxeLayers" को हिंदी में "लक्सलेयर्स" कहा जा सकता है।',
+                    style: GoogleFonts.nunitoSans(
+                      color: Colors.black,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 20, top: 20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        InkWell(
+                          onTap: () async {
+                            setState(() {
+                              _selectedindex = 0;
+                            });
+                            final SharedPreferences prefs =
+                                await SharedPreferences.getInstance();
+                            prefs.setInt('Language', _selectedindex!);
+                          },
+                          child: Container(
+                            width: 100,
+                            height: 40,
+                            decoration: BoxDecoration(
+                              color: _selectedindex == 0
+                                  ? Colors.blue.withOpacity(0.1)
+                                  : Colors.transparent,
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(20)),
+                              border: Border.all(
+                                  color: _selectedindex == 0
+                                      ? Colors.blue
+                                      : Colors.grey,
+                                  width: _selectedindex == 0 ? 2 : 1),
+                            ),
+                            child: Center(
+                              child: Text(
+                                'English',
+                                style: GoogleFonts.nunitoSans(
+                                  color: _selectedindex == 0
+                                      ? Colors.blue
+                                      : Colors.black,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        InkWell(
+                          onTap: () async {
+                            setState(() {
+                              _selectedindex = 1;
+                            });
+                            final SharedPreferences prefs =
+                                await SharedPreferences.getInstance();
+                            prefs.setInt('Language', _selectedindex!);
+                          },
+                          child: Container(
+                            width: 100,
+                            height: 40,
+                            decoration: BoxDecoration(
+                              color: _selectedindex == 1
+                                  ? Colors.blue.withOpacity(0.1)
+                                  : Colors.transparent,
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(20)),
+                              border: Border.all(
+                                  color: _selectedindex == 1
+                                      ? Colors.blue
+                                      : Colors.grey,
+                                  width: _selectedindex == 1 ? 2 : 1),
+                            ),
+                            child: Center(
+                              child: Text(
+                                'हिंदी',
+                                style: GoogleFonts.nunitoSans(
+                                  color: _selectedindex == 1
+                                      ? Colors.blue
+                                      : Colors.black,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                ],
+              )
             ],
           ),
         ),
