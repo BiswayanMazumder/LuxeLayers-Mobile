@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'dart:math';
+import 'package:flutter/foundation.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:luxelayers/Sneaker%20Detail%20Page/productdetails.dart';
 
 class DunksPage extends StatefulWidget {
   const DunksPage({super.key});
@@ -24,7 +29,8 @@ class _JordanPageState extends State<DunksPage> {
     "https://images.vegnonveg.com/resized/400X328/11408/dunk-low-game-royalblack-white-multicolor-66b4784782d8e.jpg",
     "https://images.vegnonveg.com/resized/400X328/11397/dunk-low-retro-whitedragon-red-black-white-66b3667e7b69f.jpg"
   ];
-  List<String> sneakername = [ "JORDAN JUMPMAN SLIDE NEUTRAL GREY/METALLIC SILVER",
+  List<String> sneakername = [
+    "JORDAN JUMPMAN SLIDE NEUTRAL GREY/METALLIC SILVER",
     "DUNK LOW RETRO 'WHITE/BLACK'",
     "DUNK LOW 'WHITE/BLACK' Womens",
     "DUNK LOW RETRO 'WHITE/GREY FOG'",
@@ -36,7 +42,8 @@ class _JordanPageState extends State<DunksPage> {
     "DUNK LOW 'COCONUT MILK/FLAX-SAIL'",
     "DUNK LOW 'GAME ROYAL/BLACK-WHITE'",
     "DUNK LOW RETRO 'WHITE/DRAGON RED-BLACK'",
-    "DUNK LOW NN 'PHANTOM/OBSIDIAN-PALE IVORY'"];
+    "DUNK LOW NN 'PHANTOM/OBSIDIAN-PALE IVORY'"
+  ];
   final TextEditingController _searchController = TextEditingController();
   List<String> _filteredSneakerImages = [];
   List<String> _filteredSneakerNames = [];
@@ -46,6 +53,80 @@ class _JordanPageState extends State<DunksPage> {
     _filteredSneakerImages = sneakerimages;
     _filteredSneakerNames = sneakername;
     _searchController.addListener(_filterSneakers);
+    fetchDocumentNames();
+  }
+
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  Future<void> generateRandomNumber(int index) async {
+    const chars =
+        'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    Random rng = Random();
+
+    // Generate a random document name once
+    String docName =
+        List.generate(10, (_) => chars[rng.nextInt(chars.length)]).join();
+
+    // Print the generated document name
+    print(docName);
+
+    // Set the same document name in the 'Slides' collection
+    await _firestore.collection('Dunks').doc(docName).set({
+      'Avaliable': true,
+      'Product Image': sneakerimages[index],
+      'name': sneakername[index],
+      'Price': "12500",
+      'UK 6': true,
+      'UK 7': true,
+      'UK 8': true,
+      'UK 9': true,
+      'UK 10': true,
+      'UK 11': true,
+      'UK 12': true,
+    });
+
+    // Set the same document name in the 'sneakers' collection
+    await _firestore.collection('sneakers').doc(docName).set({
+      'Avaliable': true,
+      'Product Image': sneakerimages[index],
+      'name': sneakername[index],
+      'Price': "12500",
+      'UK 6': true,
+      'UK 7': true,
+      'UK 8': true,
+      'UK 9': true,
+      'UK 10': true,
+      'UK 11': true,
+      'UK 12': true,
+    });
+  }
+
+  // List<String> _filteredSneakerImages = [];
+  // List<String> _filteredSneakerNames = [];
+  List<String> documentNames = [];
+
+  Future<void> fetchDocumentNames() async {
+    try {
+      // Access the Firestore instance
+      FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+      // Fetch the collection
+      QuerySnapshot querySnapshot = await firestore.collection('Dunks').get();
+
+      // Extract document IDs and add them to the list
+      List<String> names = querySnapshot.docs.map((doc) => doc.id).toList();
+
+      setState(() {
+        documentNames = names;
+      });
+      if (kDebugMode) {
+        print(documentNames);
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print("Error fetching document names: $e");
+      }
+    }
   }
 
   void _filterSneakers() {
@@ -54,15 +135,15 @@ class _JordanPageState extends State<DunksPage> {
       _filteredSneakerImages = sneakerimages
           .asMap()
           .entries
-          .where((entry) =>
-          sneakername[entry.key].toLowerCase().contains(query))
+          .where(
+              (entry) => sneakername[entry.key].toLowerCase().contains(query))
           .map((entry) => entry.value)
           .toList();
       _filteredSneakerNames = sneakername
           .asMap()
           .entries
-          .where((entry) =>
-          sneakername[entry.key].toLowerCase().contains(query))
+          .where(
+              (entry) => sneakername[entry.key].toLowerCase().contains(query))
           .map((entry) => entry.value)
           .toList();
     });
@@ -73,6 +154,7 @@ class _JordanPageState extends State<DunksPage> {
     _searchController.dispose();
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -81,7 +163,10 @@ class _JordanPageState extends State<DunksPage> {
         child: Column(
           children: [
             AppBar(
-              title:  Text('Air Jordan',style: GoogleFonts.nunitoSans(),),
+              title: Text(
+                'Air Jordan',
+                style: GoogleFonts.nunitoSans(),
+              ),
             ),
             const SizedBox(
               height: 20,
@@ -125,11 +210,24 @@ class _JordanPageState extends State<DunksPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Expanded(
+                  child: InkWell(
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => Product_Details(
+                            name: sneakername[index],
+                            isjordan: false,
+                            isslides: true,
+                            productid: documentNames[index],
+                            imageUrl: sneakerimages[index]),
+                      ));
+                },
                 child: Image.network(
                   _filteredSneakerImages[index],
                   fit: BoxFit.cover,
                 ),
-              ),
+              )),
               const SizedBox(height: 8.0),
               Center(
                 child: Text(

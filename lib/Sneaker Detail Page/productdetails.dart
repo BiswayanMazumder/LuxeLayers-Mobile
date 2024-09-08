@@ -16,12 +16,15 @@ class Product_Details extends StatefulWidget {
   final String name;
   final String imageUrl;
   final String productid;
-
+  final bool isjordan;
+  final bool isslides;
   const Product_Details({
     Key? key,
     required this.name,
     required this.productid,
     required this.imageUrl,
+    required this.isjordan,
+    required this.isslides,
   }) : super(key: key);
 
   @override

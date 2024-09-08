@@ -87,6 +87,8 @@ class _FavouritePageState extends State<FavouritePage> {
                               context,
                               MaterialPageRoute(
                                 builder: (context) => Product_Details(
+                                  isjordan: true,
+                                  isslides: false,
                                   name: name[index],
                                   productid: likeditems[index],
                                   imageUrl: image[index],

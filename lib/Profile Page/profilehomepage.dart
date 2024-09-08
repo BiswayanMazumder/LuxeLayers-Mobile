@@ -318,6 +318,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                   MaterialPageRoute(
                                     builder: (context) => Product_Details(
                                         name: name[index],
+                                        isjordan: index == 0 ? true : false,
+                                        isslides: index == 1 ? false : true,
                                         productid: cartitems[index],
                                         imageUrl: image[index]),
                                   ),

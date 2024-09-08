@@ -241,6 +241,8 @@ class _CartPageState extends State<CartPage> {
                                   MaterialPageRoute(
                                     builder: (context) => Product_Details(
                                       name: name[index],
+                                      isjordan: true,
+                                      isslides: false,
                                       productid: cartitems[index],
                                       imageUrl: image[index],
                                     ),

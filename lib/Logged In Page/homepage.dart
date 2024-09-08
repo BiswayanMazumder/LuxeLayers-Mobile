@@ -10,6 +10,7 @@ import 'package:luxelayers/Order%20Page/orderpage.dart';
 import 'package:luxelayers/Sneakers%20Category/Slides.dart';
 import 'package:luxelayers/Sneakers%20Category/dunks.dart';
 import 'package:luxelayers/Sneakers%20Category/jordan.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -144,10 +145,21 @@ class _HomePageState extends State<HomePage> {
     "https://images.vegnonveg.com/resized/400X328/8772/air-force-1-07-blackwhite-black_1-63bbfb21984a4.jpg",
     "https://images.vegnonveg.com/resized/400X328/11475/air-force-1-07-whitedragon-red-white-white-66c717cce8961.jpg"
   ];
+  int? _selectedindex;
+  void getlanguage() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _selectedindex = prefs.getInt('Language');
+    });
+    print(_selectedindex);
+  }
+
   @override
   void initState() {
     fetchcartdetails();
     super.initState();
+    getlanguage();
+    fetchDocumentNames();
     for (int i = 0; i < jordans.length; i++) {
       sneakerimages.add(jordans[i]);
     }
@@ -180,13 +192,39 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  List<String> documentNames = [];
+  Future<void> fetchDocumentNames() async {
+    try {
+      // Access the Firestore instance
+      FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+      // Fetch the collection
+      QuerySnapshot querySnapshot =
+          await firestore.collection('sneakers').get();
+
+      // Extract document IDs and add them to the list
+      List<String> names = querySnapshot.docs.map((doc) => doc.id).toList();
+
+      setState(() {
+        documentNames = names;
+      });
+      if (kDebugMode) {
+        print(documentNames);
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print("Error fetching document names: $e");
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: Text(
-          'Discover',
+          _selectedindex == 0 ? 'Discover' : 'पता लगाएं',
           style:
               GoogleFonts.nunitoSans(fontWeight: FontWeight.w700, fontSize: 20),
         ),
@@ -359,7 +397,7 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(height: 30),
             Center(
               child: Text(
-                'Stay Tuned...',
+                _selectedIndex == 0 ? 'Stay Tuned...' : 'सुनते रहें...',
                 style: GoogleFonts.nunitoSans(
                     fontWeight: FontWeight.bold, fontSize: 18),
               ),
@@ -538,11 +576,13 @@ class _HomePageState extends State<HomePage> {
                             itemCount: jordans.length,
                             itemBuilder: (context, index) {
                               return Card(
+                                  child: InkWell(
+                                onTap: () {},
                                 child: Image.network(
                                   jordans[index],
                                   fit: BoxFit.cover,
                                 ),
-                              );
+                              ));
                             },
                           ),
                         ),
