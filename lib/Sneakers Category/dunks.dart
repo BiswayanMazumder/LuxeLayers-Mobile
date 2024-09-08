@@ -164,7 +164,7 @@ class _JordanPageState extends State<DunksPage> {
           children: [
             AppBar(
               title: Text(
-                'Air Jordan',
+                'Nike Dunks',
                 style: GoogleFonts.nunitoSans(),
               ),
             ),

@@ -8,6 +8,7 @@ import 'package:luxelayers/Add%20To%20Cart%20Page/cartpage.dart';
 import 'package:luxelayers/Login%20and%20Signup%20Page/getstarted.dart';
 import 'package:luxelayers/Order%20Page/orderpage.dart';
 import 'package:luxelayers/Sneakers%20Category/Slides.dart';
+import 'package:luxelayers/Sneakers%20Category/airmax.dart';
 import 'package:luxelayers/Sneakers%20Category/dunks.dart';
 import 'package:luxelayers/Sneakers%20Category/jordan.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -25,6 +26,8 @@ class _HomePageState extends State<HomePage> {
     'https://images.vegnonveg.com/media/collections/102/172007371710266863df57389e.png',
     'https://images.vegnonveg.com/media/collections/75/171955723875667e5c76f082e.png',
     'https://images.vegnonveg.com/media/collections/101/17198391211016682a991ee9b7.png',
+    'https://images.vegnonveg.com/media/collections/107/17198391301076682a99a1da90.png',
+    'https://images.vegnonveg.com/media/collections/84/171955716484667e5c2c97284.png'
     // Add more image URLs here
   ];
   List<String> categories = [
@@ -381,6 +384,12 @@ class _HomePageState extends State<HomePage> {
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => const DunksPage(),
+                                ));
+                          } else if (index == 3) {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const AirmaxPage(),
                                 ));
                           }
                         },
