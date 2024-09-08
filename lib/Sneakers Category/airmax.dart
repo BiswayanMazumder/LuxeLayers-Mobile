@@ -121,8 +121,6 @@ class _AirmaxPageState extends State<AirmaxPage> {
       'UK 11': true,
       'UK 12': true,
     });
-
-    // Set the same document name in the 'sneakers' collection
     await _firestore.collection('sneakers').doc(docName).set({
       'Avaliable': true,
       'Product Image': sneakerimages[index],

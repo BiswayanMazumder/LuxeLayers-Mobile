@@ -27,7 +27,7 @@ class _HomePageState extends State<HomePage> {
     'https://images.vegnonveg.com/media/collections/75/171955723875667e5c76f082e.png',
     'https://images.vegnonveg.com/media/collections/101/17198391211016682a991ee9b7.png',
     'https://images.vegnonveg.com/media/collections/107/17198391301076682a99a1da90.png',
-    'https://images.vegnonveg.com/media/collections/84/171955716484667e5c2c97284.png'
+    // 'https://images.vegnonveg.com/media/collections/84/171955716484667e5c2c97284.png'
     // Add more image URLs here
   ];
   List<String> categories = [

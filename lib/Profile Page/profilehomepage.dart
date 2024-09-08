@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:luxelayers/Favourites%20Page/favourites.dart';
+import 'package:luxelayers/Help%20Desk/helpdesk.dart';
 import 'package:luxelayers/Order%20Page/orderpage.dart';
 import 'package:luxelayers/Sneaker%20Detail%20Page/productdetails.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -204,21 +205,31 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                     ),
                   ),
-                  Container(
-                    width: MediaQuery.of(context).size.width * 0.4,
-                    height: 50,
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey),
-                      borderRadius: BorderRadius.circular(10),
-                      color: Colors.white,
-                    ),
-                    child: Center(
-                      child: Text(
-                        _selectedindex == 0 ? 'Help Center' : 'सहायता केंद्र',
-                        style: GoogleFonts.nunitoSans(
-                          color: Colors.black,
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
+                  InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const HelpHomePage(),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      width: MediaQuery.of(context).size.width * 0.4,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey),
+                        borderRadius: BorderRadius.circular(10),
+                        color: Colors.white,
+                      ),
+                      child: Center(
+                        child: Text(
+                          _selectedindex == 0 ? 'Help Center' : 'सहायता केंद्र',
+                          style: GoogleFonts.nunitoSans(
+                            color: Colors.black,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ),
                     ),
