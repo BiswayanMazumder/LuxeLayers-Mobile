@@ -93,7 +93,7 @@ class _MyOrdersState extends State<MyOrders> {
     });
 
     if (kDebugMode) {
-      print(allStatuses.length);
+      print(allStatuses);
     }
   }
 
