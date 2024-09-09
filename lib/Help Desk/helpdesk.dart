@@ -17,6 +17,7 @@ class HelpHomePage extends StatefulWidget {
 
 class _HelpHomePageState extends State<HelpHomePage> {
   List<dynamic> cartitems = [];
+  bool isloaded=false;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   int totalcart = 0;
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -93,6 +94,7 @@ class _HelpHomePageState extends State<HelpHomePage> {
       allPrices = prices;
       allImages = images;
       allStatuses = statuses;
+      isloaded=true;
     });
   }
 
@@ -178,120 +180,235 @@ class _HelpHomePageState extends State<HelpHomePage> {
           )
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.only(left: 20, right: 20),
-        child: Column(
-          children: [
-            const SizedBox(
-              height: 30,
-            ),
-            Text(
-              'Get quick customer support by selecting your item',
-              style: GoogleFonts.nunitoSans(
-                  fontWeight: FontWeight.w600, fontSize: 18),
-            ),
-            const SizedBox(
-              height: 30,
-            ),
-            Text(
-              'Select the order to track and manage it conveniently',
-              style: GoogleFonts.nunitoSans(
-                  fontWeight: FontWeight.w600, fontSize: 18),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            for (int i = 0; i < 3; i++)
-              Column(
-                children: [
-                  Row(
-                    children: [
-                      if (allImages.length > i)
-                        Image.network(
-                          allImages[i] as String,
-                          width: 100,
-                          height: 100,
-                          fit: BoxFit.cover,
-                        ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: InkWell(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                allNames[i] as String,
-                                overflow: TextOverflow.ellipsis,
-                                style: GoogleFonts.nunitoSans(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                maxLines: 1,
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(top: 10),
-                                child: Text(
-                                  '₹${allPrices[i].toString()}',
+      body:isloaded? SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.only(left: 20, right: 20),
+          child: Column(
+            children: [
+              const SizedBox(
+                height: 30,
+              ),
+              Text(
+                'Get quick customer support by selecting your item',
+                style: GoogleFonts.nunitoSans(
+                    fontWeight: FontWeight.w600, fontSize: 18),
+              ),
+              const SizedBox(
+                height: 30,
+              ),
+              Text(
+                'Select the order to track and manage it conveniently',
+                style: GoogleFonts.nunitoSans(
+                    fontWeight: FontWeight.w600, fontSize: 18),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              for (int i = 0; i < 3; i++)
+                Column(
+                  children: [
+                    Row(
+                      children: [
+                        if (allImages.length > i)
+                          Image.network(
+                            allImages[i] as String,
+                            width: 100,
+                            height: 100,
+                            fit: BoxFit.cover,
+                          ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: InkWell(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  allNames[i] as String,
                                   overflow: TextOverflow.ellipsis,
                                   style: GoogleFonts.nunitoSans(
-                                    fontWeight: FontWeight.w600,
+                                    fontWeight: FontWeight.bold,
                                   ),
                                   maxLines: 1,
                                 ),
-                              ),
-                              // Padding(
-                              //   padding: const EdgeInsets.only(top: 10),
-                              //   child: Container(
-                              //     decoration: BoxDecoration(
-                              //       borderRadius:
-                              //           BorderRadius.circular(20),
-                              //       border: Border.all(
-                              //           color: Colors.grey, width: 1),
-                              //     ),
-                              //     child: Padding(
-                              //       padding: const EdgeInsets.all(5.0),
-                              //       child: Text(
-                              //         'Ordered By $username',
-                              //         overflow: TextOverflow.ellipsis,
-                              //         style: GoogleFonts.nunitoSans(
-                              //           fontWeight: FontWeight.w600,
-                              //           fontSize: 10,
-                              //         ),
-                              //         maxLines: 1,
-                              //       ),
-                              //     ),
-                              //   ),
-                              // ),
-                            ],
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 10),
+                                  child: Text(
+                                    '₹${allPrices[i].toString()}',
+                                    overflow: TextOverflow.ellipsis,
+                                    style: GoogleFonts.nunitoSans(
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                    maxLines: 1,
+                                  ),
+                                ),
+                                // Padding(
+                                //   padding: const EdgeInsets.only(top: 10),
+                                //   child: Container(
+                                //     decoration: BoxDecoration(
+                                //       borderRadius:
+                                //           BorderRadius.circular(20),
+                                //       border: Border.all(
+                                //           color: Colors.grey, width: 1),
+                                //     ),
+                                //     child: Padding(
+                                //       padding: const EdgeInsets.all(5.0),
+                                //       child: Text(
+                                //         'Ordered By $username',
+                                //         overflow: TextOverflow.ellipsis,
+                                //         style: GoogleFonts.nunitoSans(
+                                //           fontWeight: FontWeight.w600,
+                                //           fontSize: 10,
+                                //         ),
+                                //         maxLines: 1,
+                                //       ),
+                                //     ),
+                                //   ),
+                                // ),
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 20,
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                  ],
+                ),
+              Row(
+                children: [
+                  InkWell(
+                    onTap: () {},
+                    child: Text(
+                      'View more',
+                      style: GoogleFonts.nunitoSans(
+                          fontWeight: FontWeight.w600, fontSize: 15),
+                    ),
                   ),
                 ],
               ),
-            Row(
-              children: [
-                InkWell(
-                  onTap: () {},
-                  child: Text(
-                    'View more',
-                    style: GoogleFonts.nunitoSans(
-                        fontWeight: FontWeight.w600, fontSize: 15),
+              const SizedBox(
+                height: 20,
+              ),
+              Row(
+                children: [
+                  InkWell(
+                    onTap: () {},
+                    child: Text(
+                      'What issues are you facing?',
+                      style: GoogleFonts.nunitoSans(
+                          fontWeight: FontWeight.w600, fontSize: 18),
+                    ),
                   ),
+                ],
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              SizedBox(
+                width: MediaQuery.sizeOf(context).width,
+                // height: 100,
+                // color: Colors.red,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'I want to manage my order',
+                      style: GoogleFonts.nunitoSans(
+                          fontWeight: FontWeight.w500, fontSize: 16),
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Text(
+                      'View,cancel or help an order',
+                      style: GoogleFonts.nunitoSans(
+                          fontWeight: FontWeight.w600, fontSize: 15,color: Colors.grey),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-          ],
+              ),
+              const SizedBox(
+                height: 30,
+              ),
+              SizedBox(
+                width: MediaQuery.sizeOf(context).width,
+                // height: 100,
+                // color: Colors.red,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'I want help with return and refunds',
+                      style: GoogleFonts.nunitoSans(
+                          fontWeight: FontWeight.w500, fontSize: 16),
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Text(
+                      'Manage and track orders',
+                      style: GoogleFonts.nunitoSans(
+                          fontWeight: FontWeight.w600, fontSize: 15,color: Colors.grey),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(
+                height: 30,
+              ),
+              SizedBox(
+                width: MediaQuery.sizeOf(context).width,
+                // height: 100,
+                // color: Colors.red,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'I want help with other issues',
+                      style: GoogleFonts.nunitoSans(
+                          fontWeight: FontWeight.w500, fontSize: 16),
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Text(
+                      'Offer, payments or any other issues',
+                      style: GoogleFonts.nunitoSans(
+                          fontWeight: FontWeight.w600, fontSize: 15,color: Colors.grey),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+            ],
+          ),
         ),
+      ): Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        // crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+         const Center(
+            child: CircularProgressIndicator(
+              color: Colors.black,
+            ),
+          ),
+          Center(
+            child: Text(
+              '\nLoading',
+              style: GoogleFonts.nunitoSans(
+                  fontWeight: FontWeight.w600, fontSize: 15),
+            ),
+          )
+        ],
       ),
     );
   }
