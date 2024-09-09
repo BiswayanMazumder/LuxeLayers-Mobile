@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -34,8 +35,7 @@ class _MyOrdersState extends State<MyOrders> {
 
   Future<void> fetchOrderDetails() async {
     final user = _auth.currentUser;
-    final docsnap =
-        await _firestore.collection('Order IDs').doc(user!.uid).get();
+    final docsnap = await _firestore.collection('Order IDs').doc(user!.uid).get();
     List<dynamic> orderids = [];
 
     if (docsnap.exists) {
@@ -48,8 +48,7 @@ class _MyOrdersState extends State<MyOrders> {
     List<bool> statuses = [];
 
     for (int i = 0; i < orderids.length; i++) {
-      final docSnap =
-          await _firestore.collection('Order Details').doc(orderids[i]).get();
+      final docSnap = await _firestore.collection('Order Details').doc(orderids[i]).get();
 
       if (docSnap.exists) {
         final data = docSnap.data()!;
@@ -79,7 +78,9 @@ class _MyOrdersState extends State<MyOrders> {
         if (data['Delivered'] is List) {
           statuses.addAll(data['Delivered']);
         } else {
-          statuses.add(data['Delivered']);
+          // Ensure 'Delivered' is a List with the same length as 'names'
+          int numberOfItems = names.length - statuses.length;
+          statuses.addAll(List.generate(numberOfItems, (index) => data['Delivered']));
         }
       }
     }
@@ -90,7 +91,12 @@ class _MyOrdersState extends State<MyOrders> {
       allImages = images;
       allStatuses = statuses;
     });
+
+    if (kDebugMode) {
+      print(allStatuses.length);
+    }
   }
+
 
   @override
   void initState() {
@@ -214,11 +220,12 @@ class _MyOrdersState extends State<MyOrders> {
                                         child: Padding(
                                           padding: const EdgeInsets.all(5.0),
                                           child: Text(
-                                            'Ordered By $username',
+                                         allStatuses[index]? 'Ordered delivered successfully':'Order yet to be delivered',
                                             overflow: TextOverflow.ellipsis,
                                             style: GoogleFonts.nunitoSans(
-                                              fontWeight: FontWeight.w600,
+                                              fontWeight:allStatuses[index]? FontWeight.bold:FontWeight.w600,
                                               fontSize: 10,
+                                              color: allStatuses[index]?Colors.green:Colors.red
                                             ),
                                             maxLines: 1,
                                           ),
