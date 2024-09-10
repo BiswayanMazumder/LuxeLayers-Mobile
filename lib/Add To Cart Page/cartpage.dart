@@ -122,6 +122,7 @@ class _CartPageState extends State<CartPage> {
           .toStringAsFixed(2),
       'Order ID': orderid,
       'Delivered': false,
+      'Product ID':cartitems,
       'Order Date':FieldValue.serverTimestamp()
     });
     Navigator.push(

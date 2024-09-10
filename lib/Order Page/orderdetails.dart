@@ -15,6 +15,7 @@ class OrderDetails extends StatefulWidget {
   final String orderid;
   final bool isdelivered;
   final int price;
+  final String productid;
   const OrderDetails({
     Key? key,
     required this.name,
@@ -22,6 +23,7 @@ class OrderDetails extends StatefulWidget {
     required this.imageUrl,
     required this.isdelivered,
     required this.price,
+    required this.productid
   }) : super(key: key);
 
   @override
@@ -240,31 +242,41 @@ class _OrderDetailsState extends State<OrderDetails> {
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 25, right: 25),
-                child: Row(
-                  children: [
-                    Expanded(
-                        child: Column(
-                      children: [
-                        Text(
-                          widget.name,
-                          overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.nunitoSans(
-                            fontWeight: FontWeight.w600,
+                child: InkWell(
+                  onTap: (){
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => Product_Details(
+                        name: widget.name,
+                        productid: widget.productid,
+                        imageUrl: widget.imageUrl,
+                        isjordan: false,
+                        isslides: false),));
+                  },
+                  child: Row(
+                    children: [
+                      Expanded(
+                          child: Column(
+                        children: [
+                          Text(
+                            widget.name,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.nunitoSans(
+                              fontWeight: FontWeight.w600,
+                            ),
+                            maxLines: 3,
                           ),
-                          maxLines: 3,
-                        ),
-                      ],
-                    )),
-                    const SizedBox(
-                      width: 30,
-                    ),
-                    Image.network(
-                      widget.imageUrl,
-                      width: 100,
-                      height: 100,
-                      fit: BoxFit.cover,
-                    ),
-                  ],
+                        ],
+                      )),
+                      const SizedBox(
+                        width: 30,
+                      ),
+                      Image.network(
+                        widget.imageUrl,
+                        width: 100,
+                        height: 100,
+                        fit: BoxFit.cover,
+                      ),
+                    ],
+                  ),
                 ),
               ),
               Padding(
@@ -410,6 +422,10 @@ class _OrderDetailsState extends State<OrderDetails> {
                                 await _firestore
                                     .collection(widget.orderid)
                                     .doc(user!.uid)
+                                    .set({'Rating Given': rating});
+                                await _firestore
+                                    .collection('Ratings')
+                                    .doc(widget.orderid)
                                     .set({'Rating Given': rating});
                                 await fetchratings();
                                 if (kDebugMode) {

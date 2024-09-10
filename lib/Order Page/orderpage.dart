@@ -35,6 +35,7 @@ class _MyOrdersState extends State<MyOrders> {
   }
   List<dynamic> orderids = [];
   List<dynamic> allorderids=[];
+  List<dynamic>productid=[];
   Future<void> fetchOrderDetails() async {
     final user = _auth.currentUser;
     final docsnap =
@@ -48,6 +49,7 @@ class _MyOrdersState extends State<MyOrders> {
     List<dynamic> prices = [];
     List<dynamic> images = [];
     List<bool> statuses = [];
+    List<dynamic> pids=[];
     Map<dynamic, int> orderIdCounts = {}; // Map to track counts of each orderid
 
     for (int i = 0; i < orderids.length; i++) {
@@ -56,14 +58,17 @@ class _MyOrdersState extends State<MyOrders> {
 
       if (docSnap.exists) {
         final data = docSnap.data()!;
-
         // Handle Name
         if (data['Name'] is List) {
           names.addAll(data['Name']);
         } else {
           names.add(data['Name']);
         }
-
+        if (data['Product ID'] is List) {
+          pids.addAll(data['Product ID']);
+        } else {
+          pids.add(data['Product ID']);
+        }
         // Handle Price
         if (data['Price'] is List) {
           prices.addAll(data['Price']);
@@ -105,6 +110,7 @@ class _MyOrdersState extends State<MyOrders> {
       allPrices = prices;
       allImages = images;
       allStatuses = statuses;
+      productid=pids;
     });
 
     if (kDebugMode) {
@@ -191,6 +197,7 @@ class _MyOrdersState extends State<MyOrders> {
                           onTap: () {
                             if (kDebugMode) {
                               print(index);
+                              print(productid[index]);
                             }
                             Navigator.push(
                                 context,
@@ -201,6 +208,8 @@ class _MyOrdersState extends State<MyOrders> {
                                     name: allNames[index],
                                     orderid: allorderids[index],
                                     isdelivered: allStatuses[index],
+                                    productid: productid[index],
+                                    // productid: productid[index],
                                   ),
                                 ));
                           },
