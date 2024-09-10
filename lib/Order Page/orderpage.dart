@@ -197,8 +197,10 @@ class _MyOrdersState extends State<MyOrders> {
                                 MaterialPageRoute(
                                   builder: (context) =>  OrderDetails(
                                     imageUrl: allImages[index],
+                                    price: allPrices[index],
                                     name: allNames[index],
                                     orderid: allorderids[index],
+                                    isdelivered: allStatuses[index],
                                   ),
                                 ));
                           },
