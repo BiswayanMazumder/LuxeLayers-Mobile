@@ -2,8 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:luxelayers/Add%20To%20Cart%20Page/cartpage.dart';
+
 class OrderDetails extends StatefulWidget {
   final String name;
   final String imageUrl;
@@ -25,14 +27,14 @@ class OrderDetails extends StatefulWidget {
 
 class _OrderDetailsState extends State<OrderDetails> {
   List<dynamic> cartitems = [];
-  bool isloaded=false;
+  bool isloaded = false;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   int totalcart = 0;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   Future<void> fetchcartdetails() async {
     final user = _auth.currentUser;
     final docsnap =
-    await _firestore.collection('Cart Items').doc(user!.uid).get();
+        await _firestore.collection('Cart Items').doc(user!.uid).get();
 
     if (docsnap.exists) {
       setState(() {
@@ -40,19 +42,22 @@ class _OrderDetailsState extends State<OrderDetails> {
       });
     }
   }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     fetchcartdetails();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Order Details',style: GoogleFonts.nunitoSans(
-          fontWeight: FontWeight.w600
-        ),),
+        title: Text(
+          'Order Details',
+          style: GoogleFonts.nunitoSans(fontWeight: FontWeight.w600),
+        ),
         actions: [
           Row(
             children: [
@@ -125,12 +130,14 @@ class _OrderDetailsState extends State<OrderDetails> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
-                padding: const EdgeInsets.only(left: 25,right: 25),
-                child: Text('Order ID - ${widget.orderid}',style: GoogleFonts.nunitoSans(
-                  color: Colors.grey,
-                  fontWeight: FontWeight.w500,
-                  fontSize: 16
-                ),),
+                padding: const EdgeInsets.only(left: 25, right: 25),
+                child: Text(
+                  'Order ID - ${widget.orderid}',
+                  style: GoogleFonts.nunitoSans(
+                      color: Colors.grey,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 16),
+                ),
               ),
               const SizedBox(
                 height: 10,
@@ -144,10 +151,11 @@ class _OrderDetailsState extends State<OrderDetails> {
                 height: 5,
               ),
               Padding(
-                padding: const EdgeInsets.only(left: 25,right: 25),
+                padding: const EdgeInsets.only(left: 25, right: 25),
                 child: Row(
                   children: [
-                    Expanded(child: Column(
+                    Expanded(
+                        child: Column(
                       children: [
                         Text(
                           widget.name,
@@ -168,25 +176,30 @@ class _OrderDetailsState extends State<OrderDetails> {
                       height: 100,
                       fit: BoxFit.cover,
                     ),
-
                   ],
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(left: 25,right: 25),
-                child: Text('Seller: LuxeLayers',style: GoogleFonts.nunitoSans(
-                  fontWeight: FontWeight.w400,
-                  color: Colors.grey,
-                ),),
+                padding: const EdgeInsets.only(left: 25, right: 25),
+                child: Text(
+                  'Seller: LuxeLayers',
+                  style: GoogleFonts.nunitoSans(
+                    fontWeight: FontWeight.w400,
+                    color: Colors.grey,
+                  ),
+                ),
               ),
               const SizedBox(
                 height: 5,
               ),
               Padding(
-                padding: const EdgeInsets.only(left: 25,right: 25),
-                child: Text('₹${widget.price}',style: GoogleFonts.nunitoSans(
-                  fontWeight: FontWeight.bold,
-                ),),
+                padding: const EdgeInsets.only(left: 25, right: 25),
+                child: Text(
+                  '₹${widget.price}',
+                  style: GoogleFonts.nunitoSans(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
               const SizedBox(
                 height: 10,
@@ -197,8 +210,51 @@ class _OrderDetailsState extends State<OrderDetails> {
                 indent: 0,
               ),
               const SizedBox(
-                height: 5,
+                height: 10,
               ),
+              widget.isdelivered
+                  ? Padding(
+                      padding: const EdgeInsets.only(left: 25, right: 25),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Rate your experience',
+                            style: GoogleFonts.nunitoSans(
+                                fontWeight: FontWeight.w600,
+                                color: Colors.grey,
+                                fontSize: 16),
+                          ),
+                          const SizedBox(
+                            height: 15,
+                          ),
+                          Center(
+                            child: RatingBar.builder(
+                              initialRating: 0,
+                              minRating: 1,
+                              direction: Axis.horizontal,
+                              allowHalfRating: false,
+                              itemCount: 5,
+                              glowColor: Colors.black,
+                              glow: true,
+                              itemPadding:
+                                  const EdgeInsets.symmetric(horizontal: 4.0),
+                              itemBuilder: (context, _) => const Icon(
+                                Icons.star,
+                                color: Colors.green,
+                              ),
+                              onRatingUpdate: (rating) {
+                                if (kDebugMode) {
+                                  print(rating);
+                                }
+                              },
+                            ),
+                          )
+                        ],
+                      ),
+                    )
+                  : Container(),
             ],
           ),
         ),
