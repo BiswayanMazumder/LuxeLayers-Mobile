@@ -121,7 +121,8 @@ class _CartPageState extends State<CartPage> {
       'Total': (total + (total > 14000.0 ? 0 : 500) + (total * 0.12))
           .toStringAsFixed(2),
       'Order ID': orderid,
-      'Delivered': false
+      'Delivered': false,
+      'Order Date':FieldValue.serverTimestamp()
     });
     Navigator.push(
         context,
@@ -145,13 +146,19 @@ class _CartPageState extends State<CartPage> {
             children: [
               Row(
                 children: [
-                  Text(
+                cartitems.isNotEmpty?  Text(
                     '₹${(total + (total > 14000.0 ? 0 : 500) + (total * 0.12)).toStringAsFixed(2)}',
                     style: GoogleFonts.nunitoSans(
                         color: Colors.black,
                         fontSize: 20,
                         fontWeight: FontWeight.w600),
-                  ),
+                  ):Text(
+                  '₹0',
+                  style: GoogleFonts.nunitoSans(
+                      color: Colors.black,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600),
+                ),
                   const Spacer(),
                   InkWell(
                     onTap: () async {
