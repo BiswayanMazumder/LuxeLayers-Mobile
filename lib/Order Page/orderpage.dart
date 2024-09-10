@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:luxelayers/Order%20Page/orderdetails.dart';
 
 class MyOrders extends StatefulWidget {
   const MyOrders({super.key});
@@ -15,7 +16,7 @@ class _MyOrdersState extends State<MyOrders> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   String username = '';
-  TextEditingController _searchController = TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
   List<dynamic> allNames = [];
   List<dynamic> allImages = [];
   List<dynamic> allPrices = [];
@@ -32,11 +33,12 @@ class _MyOrdersState extends State<MyOrders> {
     }
     // print(username);
   }
-
+  List<dynamic> orderids = [];
+  List<dynamic> allorderids=[];
   Future<void> fetchOrderDetails() async {
     final user = _auth.currentUser;
-    final docsnap = await _firestore.collection('Order IDs').doc(user!.uid).get();
-    List<dynamic> orderids = [];
+    final docsnap =
+    await _firestore.collection('Order IDs').doc(user!.uid).get();
 
     if (docsnap.exists) {
       orderids = docsnap.data()!['IDs'];
@@ -46,9 +48,11 @@ class _MyOrdersState extends State<MyOrders> {
     List<dynamic> prices = [];
     List<dynamic> images = [];
     List<bool> statuses = [];
+    Map<dynamic, int> orderIdCounts = {}; // Map to track counts of each orderid
 
     for (int i = 0; i < orderids.length; i++) {
-      final docSnap = await _firestore.collection('Order Details').doc(orderids[i]).get();
+      final docSnap =
+      await _firestore.collection('Order Details').doc(orderids[i]).get();
 
       if (docSnap.exists) {
         final data = docSnap.data()!;
@@ -77,13 +81,24 @@ class _MyOrdersState extends State<MyOrders> {
         // Handle Delivered Status
         if (data['Delivered'] is List) {
           statuses.addAll(data['Delivered']);
+          // Track the count for this orderid
+          orderIdCounts[orderids[i]] = (orderIdCounts[orderids[i]] ?? 0) + (data['Delivered'] as List).length;
         } else {
           // Ensure 'Delivered' is a List with the same length as 'names'
           int numberOfItems = names.length - statuses.length;
-          statuses.addAll(List.generate(numberOfItems, (index) => data['Delivered']));
+          statuses.addAll(
+              List.generate(numberOfItems, (index) => data['Delivered']));
+          // Track the count for this orderid
+          orderIdCounts[orderids[i]] = (orderIdCounts[orderids[i]] ?? 0) + numberOfItems;
         }
       }
     }
+
+    // Populate allorderids based on the orderIdCounts map
+    allorderids = [];
+    orderIdCounts.forEach((orderid, count) {
+      allorderids.addAll(List.generate(count, (index) => orderid));
+    });
 
     setState(() {
       allNames = names;
@@ -93,7 +108,7 @@ class _MyOrdersState extends State<MyOrders> {
     });
 
     if (kDebugMode) {
-      print(allStatuses);
+      print(allorderids);
     }
   }
 
@@ -134,7 +149,7 @@ class _MyOrdersState extends State<MyOrders> {
           ),
         ),
         bottom: PreferredSize(
-          preferredSize: Size.fromHeight(80), // Adjust height for the TextField
+          preferredSize: const Size.fromHeight(80), // Adjust height for the TextField
           child: Padding(
             padding: const EdgeInsets.symmetric(
               horizontal: 25.0,
@@ -155,96 +170,118 @@ class _MyOrdersState extends State<MyOrders> {
         ),
       ),
       body: Padding(
-        padding: const EdgeInsets.only(left: 25, right: 25, top: 50),
-        child: allNames.isEmpty
-            ? const Center(
-                child: CircularProgressIndicator(
-                color: Colors.black,
-              ))
-            : filteredIndexes.isEmpty
-                ? Center(
-                    child: Text(
-                      'No orders found.',
-                      style: GoogleFonts.nunitoSans(),
-                    ),
-                  )
-                : ListView.builder(
-          itemCount: filteredIndexes.length,
-          itemBuilder: (context, index) {
-            final idx = filteredIndexes[index];
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 80),
-              child: Row(
-                children: [
-                  if (allImages.length > idx)
-                    Image.network(
-                      allImages[idx] as String,
-                      width: 100,
-                      height: 100,
-                      fit: BoxFit.cover,
-                    ),
-                  SizedBox(width: 10),
-                  Expanded(
-                    child: InkWell(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            allNames[idx] as String,
-                            overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.nunitoSans(
-                              fontWeight: FontWeight.bold,
-                            ),
-                            maxLines: 1,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 10),
-                            child: Text(
-                              '₹${allPrices[idx].toString()}',
-                              overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.nunitoSans(
-                                fontWeight: FontWeight.w600,
-                              ),
-                              maxLines: 1,
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 10),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20),
-                                border: Border.all(color: Colors.grey, width: 1),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(5.0),
-                                child: Text(
-                                  allStatuses[idx]
-                                      ? 'Order delivered successfully'
-                                      : 'Order yet to be delivered',
-                                  overflow: TextOverflow.ellipsis,
-                                  style: GoogleFonts.nunitoSans(
-                                    fontWeight: allStatuses[idx]
-                                        ? FontWeight.bold
-                                        : FontWeight.w600,
-                                    fontSize: 10,
-                                    color: allStatuses[idx] ? Colors.green : Colors.red,
-                                  ),
-                                  maxLines: 1,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
+          padding: const EdgeInsets.only(left: 25, right: 25, top: 50),
+          child: allNames.isEmpty
+              ? const Center(
+                  child: CircularProgressIndicator(
+                  color: Colors.black,
+                ))
+              : filteredIndexes.isEmpty
+                  ? Center(
+                      child: Text(
+                        'No orders found.',
+                        style: GoogleFonts.nunitoSans(),
                       ),
-                    ),
-                  ),
-                ],
-              ),
-            );
-          },
-        )
-
-      ),
+                    )
+                  : ListView.builder(
+                      itemCount: filteredIndexes.length,
+                      itemBuilder: (context, index) {
+                        final idx = filteredIndexes[index];
+                        return InkWell(
+                          onTap: () {
+                            if (kDebugMode) {
+                              print(index);
+                            }
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>  OrderDetails(
+                                    imageUrl: allImages[index],
+                                    name: allNames[index],
+                                    orderid: allorderids[index],
+                                  ),
+                                ));
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.only(bottom: 80),
+                            child: Row(
+                              children: [
+                                if (allImages.length > idx)
+                                  Image.network(
+                                    allImages[idx] as String,
+                                    width: 100,
+                                    height: 100,
+                                    fit: BoxFit.cover,
+                                  ),
+                                const SizedBox(width: 10),
+                                Expanded(
+                                  child: InkWell(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          allNames[idx] as String,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: GoogleFonts.nunitoSans(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                          maxLines: 1,
+                                        ),
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(top: 10),
+                                          child: Text(
+                                            '₹${allPrices[idx].toString()}',
+                                            overflow: TextOverflow.ellipsis,
+                                            style: GoogleFonts.nunitoSans(
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                            maxLines: 1,
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(top: 10),
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
+                                              border: Border.all(
+                                                  color: Colors.grey, width: 1),
+                                            ),
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(5.0),
+                                              child: Text(
+                                                allStatuses[idx]
+                                                    ? 'Order delivered successfully'
+                                                    : 'Order yet to be delivered',
+                                                overflow: TextOverflow.ellipsis,
+                                                style: GoogleFonts.nunitoSans(
+                                                  fontWeight: allStatuses[idx]
+                                                      ? FontWeight.bold
+                                                      : FontWeight.w600,
+                                                  fontSize: 10,
+                                                  color: allStatuses[idx]
+                                                      ? Colors.green
+                                                      : Colors.red,
+                                                ),
+                                                maxLines: 1,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    )),
     );
   }
 }
