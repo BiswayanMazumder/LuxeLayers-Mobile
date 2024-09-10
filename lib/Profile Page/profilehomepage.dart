@@ -303,7 +303,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 children: [
                   Text(
                     _selectedindex == 0
-                        ? 'Recently Viewed Stores'
+                        ? 'Recently Viewed Items'
                         : '"हाल ही में देखे गए स्टोर"',
                     style: GoogleFonts.nunitoSans(
                       color: Colors.black,

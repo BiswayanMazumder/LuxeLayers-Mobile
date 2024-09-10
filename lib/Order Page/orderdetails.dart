@@ -7,6 +7,7 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:luxelayers/Add%20To%20Cart%20Page/cartpage.dart';
+import 'package:luxelayers/Sneaker%20Detail%20Page/productdetails.dart';
 
 class OrderDetails extends StatefulWidget {
   final String name;
@@ -62,7 +63,7 @@ class _OrderDetailsState extends State<OrderDetails> {
   String? formattedorderDate;
   Future<void> fetchorderdate() async {
     final docsnap =
-    await _firestore.collection('Order Details').doc(widget.orderid).get();
+        await _firestore.collection('Order Details').doc(widget.orderid).get();
     if (docsnap.exists) {
       setState(() {
         // deliverdate = (docsnap.data()?['Delivery Date'] as Timestamp).toDate();
@@ -71,8 +72,11 @@ class _OrderDetailsState extends State<OrderDetails> {
         formattedorderDate = DateFormat('MMM dd').format(orderdate!);
       });
     }
-    print(formattedorderDate);
+    if (kDebugMode) {
+      print(formattedorderDate);
+    }
   }
+
   Future<void> fetchdeliverydate() async {
     final docsnap =
         await _firestore.collection('Order Details').doc(widget.orderid).get();
@@ -84,7 +88,42 @@ class _OrderDetailsState extends State<OrderDetails> {
         // formattedorderDate = DateFormat('MMM dd').format(orderdate!);
       });
     }
-    print(formattedorderDate);
+    if (kDebugMode) {
+      print(formattedDate);
+    }
+  }
+
+  List<dynamic> recentlyviewed = [];
+  Future<void> fetchrecentlyviewed() async {
+    final user = _auth.currentUser;
+    final docsnap =
+        await _firestore.collection('Recently Viewed').doc(user!.uid).get();
+    if (docsnap.exists) {
+      setState(() {
+        recentlyviewed = docsnap.data()?['Product ID'] ?? [];
+      });
+    }
+  }
+
+  List<dynamic> name = [];
+  List<dynamic> price = [];
+  List<dynamic> image = [];
+  List<bool> availability = [];
+  Future<void> fetchCartProductDetails() async {
+    await fetchrecentlyviewed();
+    for (int i = 0; i < recentlyviewed.length; i++) {
+      final docsnap =
+          await _firestore.collection('sneakers').doc(recentlyviewed[i]).get();
+      if (docsnap.exists) {
+        setState(() {
+          name.add(docsnap.data()?['name']);
+          price.add(int.parse(docsnap.data()?['Price'] ?? '0'));
+          image.add(docsnap.data()?['Product Image']);
+          // availability.add(docsnap.data()?['Available']);
+          // isLoaded = true;
+        });
+      }
+    }
   }
 
   @override
@@ -93,8 +132,10 @@ class _OrderDetailsState extends State<OrderDetails> {
     super.initState();
     fetchcartdetails();
     fetchratings();
+    fetchrecentlyviewed();
     fetchorderdate();
-    fetchdeliverydate();
+    widget.isdelivered ? fetchdeliverydate() : ();
+    fetchCartProductDetails();
   }
 
   @override
@@ -285,21 +326,20 @@ class _OrderDetailsState extends State<OrderDetails> {
                     Padding(
                       padding: const EdgeInsets.only(left: 13),
                       child: SizedBox(
-                        height: 80,
-                        child: Container(
-                          width: 3,
-                          decoration: BoxDecoration(
-                            color: widget.isdelivered ? Colors.green : null,
-                            gradient: widget.isdelivered
-                                ? null
-                                : const LinearGradient(
-                              colors: [Colors.green, Colors.red],
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
+                          height: 80,
+                          child: Container(
+                            width: 3,
+                            decoration: BoxDecoration(
+                              color: widget.isdelivered ? Colors.green : null,
+                              gradient: widget.isdelivered
+                                  ? null
+                                  : const LinearGradient(
+                                      colors: [Colors.green, Colors.red],
+                                      begin: Alignment.topCenter,
+                                      end: Alignment.bottomCenter,
+                                    ),
                             ),
-                          ),
-                        )
-                      ),
+                          )),
                     ),
                     Row(
                       children: [
@@ -312,13 +352,19 @@ class _OrderDetailsState extends State<OrderDetails> {
                             color: Colors.white,
                           ),
                         ),
-                       widget.isdelivered? Text('  Order confirmed on $formattedDate',style: GoogleFonts.nunitoSans(
-                            color: Colors.black,
-                            fontWeight: FontWeight.w600
-                        ),):Text('  Order yet to be delivered',style: GoogleFonts.nunitoSans(
-                           color: Colors.black,
-                           fontWeight: FontWeight.w600
-                       ),)
+                        widget.isdelivered
+                            ? Text(
+                                '  Order confirmed on $formattedDate',
+                                style: GoogleFonts.nunitoSans(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w600),
+                              )
+                            : Text(
+                                '  Order yet to be delivered',
+                                style: GoogleFonts.nunitoSans(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w600),
+                              )
                       ],
                     )
                   ],
@@ -376,6 +422,71 @@ class _OrderDetailsState extends State<OrderDetails> {
                       ),
                     )
                   : Container(),
+              Padding(
+                padding: const EdgeInsets.only(left: 25, right: 25, top: 25),
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Recently Viewed Items',
+                        style: GoogleFonts.nunitoSans(
+                          color: Colors.black,
+                          fontWeight: FontWeight.w500,
+                          fontSize: 16,
+                        ),
+                      )
+                    ]),
+              ),
+              const SizedBox(height: 30),
+              SizedBox(
+                height: 150, // Height of the ListView
+                // width: 50,
+                child: ListView.builder(
+                  itemCount: image.length,
+                  scrollDirection: Axis.horizontal,
+                  itemBuilder: (context, index) {
+                    return Padding(
+                        padding:
+                        const EdgeInsets.symmetric(horizontal: 20.0),
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => Product_Details(
+                                    name: name[index],
+                                    isjordan: index == 0 ? true : false,
+                                    isslides: index == 1 ? false : true,
+                                    productid: cartitems[index],
+                                    imageUrl: image[index]),
+                              ),
+                            );
+                          },
+                          child: Image.network(
+                            image[index],
+                            height: 20,
+                            // width: 0,
+                            fit: BoxFit.cover,
+                            // width: 50, // Width of each image
+                            loadingBuilder: (context, child, progress) {
+                              if (progress == null) {
+                                return child;
+                              } else {
+                                return const Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                              }
+                            },
+                            errorBuilder: (context, error, stackTrace) {
+                              return const Center(
+                                child: Icon(Icons.error, color: Colors.red),
+                              );
+                            },
+                          ),
+                        ));
+                  },
+                ),
+              ),
             ],
           ),
         ),
