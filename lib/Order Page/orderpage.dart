@@ -169,78 +169,81 @@ class _MyOrdersState extends State<MyOrders> {
                     ),
                   )
                 : ListView.builder(
-                    itemCount: filteredIndexes.length,
-                    itemBuilder: (context, index) {
-                      final idx = filteredIndexes[index];
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 80),
-                        child: Row(
-                          children: [
-                            if (allImages.length > idx)
-                              Image.network(
-                                allImages[idx] as String,
-                                width: 100,
-                                height: 100,
-                                fit: BoxFit.cover,
+          itemCount: filteredIndexes.length,
+          itemBuilder: (context, index) {
+            final idx = filteredIndexes[index];
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 80),
+              child: Row(
+                children: [
+                  if (allImages.length > idx)
+                    Image.network(
+                      allImages[idx] as String,
+                      width: 100,
+                      height: 100,
+                      fit: BoxFit.cover,
+                    ),
+                  SizedBox(width: 10),
+                  Expanded(
+                    child: InkWell(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            allNames[idx] as String,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.nunitoSans(
+                              fontWeight: FontWeight.bold,
+                            ),
+                            maxLines: 1,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 10),
+                            child: Text(
+                              '₹${allPrices[idx].toString()}',
+                              overflow: TextOverflow.ellipsis,
+                              style: GoogleFonts.nunitoSans(
+                                fontWeight: FontWeight.w600,
                               ),
-                            SizedBox(width: 10),
-                            Expanded(
-                              child: InkWell(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      allNames[idx] as String,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: GoogleFonts.nunitoSans(
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                      maxLines: 1,
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(top: 10),
-                                      child: Text(
-                                        '₹${allPrices[idx].toString()}',
-                                        overflow: TextOverflow.ellipsis,
-                                        style: GoogleFonts.nunitoSans(
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                        maxLines: 1,
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(top: 10),
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(20),
-                                          border: Border.all(
-                                              color: Colors.grey, width: 1),
-                                        ),
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(5.0),
-                                          child: Text(
-                                         allStatuses[index]? 'Ordered delivered successfully':'Order yet to be delivered',
-                                            overflow: TextOverflow.ellipsis,
-                                            style: GoogleFonts.nunitoSans(
-                                              fontWeight:allStatuses[index]? FontWeight.bold:FontWeight.w600,
-                                              fontSize: 10,
-                                              color: allStatuses[index]?Colors.green:Colors.red
-                                            ),
-                                            maxLines: 1,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
+                              maxLines: 1,
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 10),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(color: Colors.grey, width: 1),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(5.0),
+                                child: Text(
+                                  allStatuses[idx]
+                                      ? 'Order delivered successfully'
+                                      : 'Order yet to be delivered',
+                                  overflow: TextOverflow.ellipsis,
+                                  style: GoogleFonts.nunitoSans(
+                                    fontWeight: allStatuses[idx]
+                                        ? FontWeight.bold
+                                        : FontWeight.w600,
+                                    fontSize: 10,
+                                    color: allStatuses[idx] ? Colors.green : Colors.red,
+                                  ),
+                                  maxLines: 1,
                                 ),
                               ),
                             ),
-                          ],
-                        ),
-                      );
-                    },
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
+                ],
+              ),
+            );
+          },
+        )
+
       ),
     );
   }
