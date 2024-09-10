@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:luxelayers/Add%20To%20Cart%20Page/cartpage.dart';
 
 class OrderDetails extends StatefulWidget {
@@ -28,7 +29,7 @@ class OrderDetails extends StatefulWidget {
 
 class _OrderDetailsState extends State<OrderDetails> {
   List<dynamic> cartitems = [];
-  double ratings=0;
+  double ratings = 0;
   bool isloaded = false;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   int totalcart = 0;
@@ -37,28 +38,49 @@ class _OrderDetailsState extends State<OrderDetails> {
     final user = _auth.currentUser;
     final docsnap =
         await _firestore.collection('Cart Items').doc(user!.uid).get();
-
     if (docsnap.exists) {
       setState(() {
         cartitems = docsnap.data()?['Product ID'];
       });
     }
   }
-  Future<void> fetchratings()async{
-    final user=_auth.currentUser;
-    final docsnap=await _firestore.collection(widget.orderid).doc(user!.uid).get();
-    if(docsnap.exists){
+
+  Future<void> fetchratings() async {
+    final user = _auth.currentUser;
+    final docsnap =
+        await _firestore.collection(widget.orderid).doc(user!.uid).get();
+    if (docsnap.exists) {
       setState(() {
-        ratings=docsnap.data()?['Rating Given'];
+        ratings = docsnap.data()?['Rating Given'];
       });
     }
   }
+
+  DateTime? deliverdate;
+  String? formattedDate;
+  DateTime? orderdate;
+  String? formattedorderDate;
+  Future<void> fetchdeliverydate() async {
+    final docsnap =
+        await _firestore.collection('Order Details').doc(widget.orderid).get();
+    if (docsnap.exists) {
+      setState(() {
+        deliverdate = (docsnap.data()?['Delivery Date'] as Timestamp).toDate();
+        orderdate = (docsnap.data()?['Order Date'] as Timestamp).toDate();
+        formattedDate = DateFormat('MMM dd').format(deliverdate!);
+        formattedorderDate = DateFormat('MMM dd').format(orderdate!);
+      });
+    }
+    print(formattedorderDate);
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     fetchcartdetails();
     fetchratings();
+    fetchdeliverydate();
   }
 
   @override
@@ -223,6 +245,75 @@ class _OrderDetailsState extends State<OrderDetails> {
               const SizedBox(
                 height: 10,
               ),
+              Padding(
+                padding: const EdgeInsets.only(left: 25, right: 25),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        const CircleAvatar(
+                          radius: 15,
+                          backgroundColor: Colors.green,
+                          child: Icon(
+                            Icons.check,
+                            color: Colors.white,
+                          ),
+                        ),
+                        Text(
+                          '  Order confirmed on $formattedorderDate',
+                          style: GoogleFonts.nunitoSans(
+                              color: Colors.black, fontWeight: FontWeight.w600),
+                        )
+                      ],
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 13),
+                      child: SizedBox(
+                        height: 80,
+                        child: Container(
+                          width: 3,
+                          decoration: BoxDecoration(
+                            color: widget.isdelivered ? Colors.green : null,
+                            gradient: widget.isdelivered
+                                ? null
+                                : const LinearGradient(
+                              colors: [Colors.green, Colors.red],
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                            ),
+                          ),
+                        )
+
+                      ),
+                    ),
+                    Row(
+                      children: [
+                        CircleAvatar(
+                          radius: 15,
+                          backgroundColor:
+                              widget.isdelivered ? Colors.green : Colors.red,
+                          child: Icon(
+                            widget.isdelivered ? Icons.check : Icons.close,
+                            color: Colors.white,
+                          ),
+                        ),
+                       widget.isdelivered? Text('  Order confirmed on $formattedDate',style: GoogleFonts.nunitoSans(
+                            color: Colors.black,
+                            fontWeight: FontWeight.w600
+                        ),):Text('  Order yet to be delivered',style: GoogleFonts.nunitoSans(
+                           color: Colors.black,
+                           fontWeight: FontWeight.w600
+                       ),)
+                      ],
+                    )
+                  ],
+                ),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
               widget.isdelivered
                   ? Padding(
                       padding: const EdgeInsets.only(left: 25, right: 25),
@@ -245,7 +336,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                               initialRating: ratings,
                               minRating: 1,
                               direction: Axis.horizontal,
-                              allowHalfRating: false,
+                              allowHalfRating: true,
                               itemCount: 5,
                               glowColor: Colors.black,
                               glow: true,
@@ -255,12 +346,12 @@ class _OrderDetailsState extends State<OrderDetails> {
                                 Icons.star,
                                 color: Colors.green,
                               ),
-                              onRatingUpdate: (rating) async{
-                                final user=_auth.currentUser;
-                                await _firestore.collection(widget.orderid).doc(user!.uid).set(
-                                    {
-                                      'Rating Given':rating
-                                    });
+                              onRatingUpdate: (rating) async {
+                                final user = _auth.currentUser;
+                                await _firestore
+                                    .collection(widget.orderid)
+                                    .doc(user!.uid)
+                                    .set({'Rating Given': rating});
                                 await fetchratings();
                                 if (kDebugMode) {
                                   print(rating);
