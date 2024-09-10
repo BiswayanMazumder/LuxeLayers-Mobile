@@ -60,15 +60,28 @@ class _OrderDetailsState extends State<OrderDetails> {
   String? formattedDate;
   DateTime? orderdate;
   String? formattedorderDate;
+  Future<void> fetchorderdate() async {
+    final docsnap =
+    await _firestore.collection('Order Details').doc(widget.orderid).get();
+    if (docsnap.exists) {
+      setState(() {
+        // deliverdate = (docsnap.data()?['Delivery Date'] as Timestamp).toDate();
+        orderdate = (docsnap.data()?['Order Date'] as Timestamp).toDate();
+        // formattedDate = DateFormat('MMM dd').format(deliverdate!);
+        formattedorderDate = DateFormat('MMM dd').format(orderdate!);
+      });
+    }
+    print(formattedorderDate);
+  }
   Future<void> fetchdeliverydate() async {
     final docsnap =
         await _firestore.collection('Order Details').doc(widget.orderid).get();
     if (docsnap.exists) {
       setState(() {
         deliverdate = (docsnap.data()?['Delivery Date'] as Timestamp).toDate();
-        orderdate = (docsnap.data()?['Order Date'] as Timestamp).toDate();
+        // orderdate = (docsnap.data()?['Order Date'] as Timestamp).toDate();
         formattedDate = DateFormat('MMM dd').format(deliverdate!);
-        formattedorderDate = DateFormat('MMM dd').format(orderdate!);
+        // formattedorderDate = DateFormat('MMM dd').format(orderdate!);
       });
     }
     print(formattedorderDate);
@@ -80,6 +93,7 @@ class _OrderDetailsState extends State<OrderDetails> {
     super.initState();
     fetchcartdetails();
     fetchratings();
+    fetchorderdate();
     fetchdeliverydate();
   }
 
@@ -285,7 +299,6 @@ class _OrderDetailsState extends State<OrderDetails> {
                             ),
                           ),
                         )
-
                       ),
                     ),
                     Row(
