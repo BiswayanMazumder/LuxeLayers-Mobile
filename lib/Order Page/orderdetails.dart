@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -27,6 +28,7 @@ class OrderDetails extends StatefulWidget {
 
 class _OrderDetailsState extends State<OrderDetails> {
   List<dynamic> cartitems = [];
+  double ratings=0;
   bool isloaded = false;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   int totalcart = 0;
@@ -42,12 +44,21 @@ class _OrderDetailsState extends State<OrderDetails> {
       });
     }
   }
-
+  Future<void> fetchratings()async{
+    final user=_auth.currentUser;
+    final docsnap=await _firestore.collection(widget.orderid).doc(user!.uid).get();
+    if(docsnap.exists){
+      setState(() {
+        ratings=docsnap.data()?['Rating Given'];
+      });
+    }
+  }
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     fetchcartdetails();
+    fetchratings();
   }
 
   @override
@@ -231,7 +242,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                           ),
                           Center(
                             child: RatingBar.builder(
-                              initialRating: 0,
+                              initialRating: ratings,
                               minRating: 1,
                               direction: Axis.horizontal,
                               allowHalfRating: false,
@@ -244,7 +255,13 @@ class _OrderDetailsState extends State<OrderDetails> {
                                 Icons.star,
                                 color: Colors.green,
                               ),
-                              onRatingUpdate: (rating) {
+                              onRatingUpdate: (rating) async{
+                                final user=_auth.currentUser;
+                                await _firestore.collection(widget.orderid).doc(user!.uid).set(
+                                    {
+                                      'Rating Given':rating
+                                    });
+                                await fetchratings();
                                 if (kDebugMode) {
                                   print(rating);
                                 }
