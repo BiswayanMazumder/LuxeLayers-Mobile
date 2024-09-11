@@ -18,7 +18,7 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  int? _selectedindex;
+  int _selectedindex=0;
   List<dynamic> cartitems = [];
   List<dynamic> name = [];
   List<dynamic> price = [];
@@ -84,20 +84,13 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
-  void getlanguage() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _selectedindex = prefs.getInt('Language');
-    });
-    print(_selectedindex);
-  }
 
   @override
   void initState() {
     super.initState();
     fetchName();
     fetchCartProductDetails();
-    getlanguage();
+    // getlanguage();
   }
 
   @override

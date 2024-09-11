@@ -7,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:luxelayers/Add%20To%20Cart%20Page/cartpage.dart';
 import 'package:luxelayers/Login%20and%20Signup%20Page/getstarted.dart';
 import 'package:luxelayers/Order%20Page/orderpage.dart';
+import 'package:luxelayers/Sneaker%20Detail%20Page/productdetails.dart';
 import 'package:luxelayers/Sneakers%20Category/Slides.dart';
 import 'package:luxelayers/Sneakers%20Category/airmax.dart';
 import 'package:luxelayers/Sneakers%20Category/dunks.dart';
@@ -148,20 +149,15 @@ class _HomePageState extends State<HomePage> {
     "https://images.vegnonveg.com/resized/400X328/8772/air-force-1-07-blackwhite-black_1-63bbfb21984a4.jpg",
     "https://images.vegnonveg.com/resized/400X328/11475/air-force-1-07-whitedragon-red-white-white-66c717cce8961.jpg"
   ];
-  int? _selectedindex;
-  void getlanguage() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _selectedindex = prefs.getInt('Language');
-    });
-    print(_selectedindex);
-  }
+  int _selectedindex = 0;
 
   @override
   void initState() {
     fetchcartdetails();
+    fetchslidesDocumentNames();
     super.initState();
-    getlanguage();
+    // getlanguage();
+    fetchallDocumentNames();
     fetchDocumentNames();
     for (int i = 0; i < jordans.length; i++) {
       sneakerimages.add(jordans[i]);
@@ -196,7 +192,24 @@ class _HomePageState extends State<HomePage> {
   }
 
   List<String> documentNames = [];
-  Future<void> fetchDocumentNames() async {
+  List<String> alldocumentNames = [];
+  List<String> fetchedajname = [];
+  List<String> fetchedajpic = [];
+  List<String> fetchedslidesname = [];
+  List<String> fetchedslidespic = [];
+  List<String> slidesdocumentNames = [];
+  List<String> fetcheddunksname = [];
+  List<String> fetcheddunkspic = [];
+  List<String> dunksdocumentNames = [];
+  List<String> fetchedamname = [];
+  List<String> fetchedampic = [];
+  List<String> amdocumentNames = [];
+  List<String> fetchedafname = [];
+  List<String> fetchedafpic = [];
+  List<String> afdocumentNames = [];
+  List<String> fetchedallname = [];
+  List<String> fetchedallpic = [];
+  Future<void> fetchallDocumentNames() async {
     try {
       // Access the Firestore instance
       FirebaseFirestore firestore = FirebaseFirestore.instance;
@@ -204,6 +217,49 @@ class _HomePageState extends State<HomePage> {
       // Fetch the collection
       QuerySnapshot querySnapshot =
           await firestore.collection('sneakers').get();
+
+      // Extract document IDs and add them to the list
+      List<String> names = querySnapshot.docs.map((doc) => doc.id).toList();
+
+      setState(() {
+        alldocumentNames = names;
+      });
+      if (kDebugMode) {
+        print(documentNames);
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print("Error fetching document names: $e");
+      }
+    }
+    for (int i = 0; i < alldocumentNames.length; i++) {
+      final docsnap = await _firestore
+          .collection('sneakers')
+          .doc(alldocumentNames[i])
+          .get();
+      if (docsnap.exists) {
+        setState(() {
+          fetchedallname.add(docsnap.data()?['name']);
+          fetchedallpic.add(docsnap.data()?['Product Image']);
+        });
+      }
+    }
+    if (kDebugMode) {
+      print(fetchedajpic);
+    }
+    if (kDebugMode) {
+      print(fetchedajname);
+    }
+  }
+
+  Future<void> fetchDocumentNames() async {
+    try {
+      // Access the Firestore instance
+      FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+      // Fetch the collection
+      QuerySnapshot querySnapshot =
+          await firestore.collection('Air Jordan').get();
 
       // Extract document IDs and add them to the list
       List<String> names = querySnapshot.docs.map((doc) => doc.id).toList();
@@ -219,8 +275,63 @@ class _HomePageState extends State<HomePage> {
         print("Error fetching document names: $e");
       }
     }
+    for (int i = 0; i < documentNames.length; i++) {
+      final docsnap =
+          await _firestore.collection('Air Jordan').doc(documentNames[i]).get();
+      if (docsnap.exists) {
+        setState(() {
+          fetchedajname.add(docsnap.data()?['name']);
+          fetchedajpic.add(docsnap.data()?['Product Image']);
+        });
+      }
+    }
+    if (kDebugMode) {
+      print(fetchedajpic);
+    }
+    if (kDebugMode) {
+      print(fetchedajname);
+    }
   }
+  Future<void> fetchslidesDocumentNames() async {
+    try {
+      // Access the Firestore instance
+      FirebaseFirestore firestore = FirebaseFirestore.instance;
 
+      // Fetch the collection
+      QuerySnapshot querySnapshot =
+      await firestore.collection('Slides').get();
+
+      // Extract document IDs and add them to the list
+      List<String> names = querySnapshot.docs.map((doc) => doc.id).toList();
+
+      setState(() {
+        slidesdocumentNames = names;
+      });
+      if (kDebugMode) {
+        print(documentNames);
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print("Error fetching document names: $e");
+      }
+    }
+    for (int i = 0; i < slidesdocumentNames.length; i++) {
+      final docsnap =
+      await _firestore.collection('Slides').doc(slidesdocumentNames[i]).get();
+      if (docsnap.exists) {
+        setState(() {
+          fetchedslidesname.add(docsnap.data()?['name']);
+          fetchedslidespic.add(docsnap.data()?['Product Image']);
+        });
+      }
+    }
+    if (kDebugMode) {
+      print(fetchedajpic);
+    }
+    if (kDebugMode) {
+      print(fetchedajname);
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -406,7 +517,7 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(height: 30),
             Center(
               child: Text(
-                _selectedIndex == 0 ? 'Stay Tuned...' : 'सुनते रहें...',
+                'Stay Tuned...',
                 style: GoogleFonts.nunitoSans(
                     fontWeight: FontWeight.bold, fontSize: 18),
               ),
@@ -556,12 +667,26 @@ class _HomePageState extends State<HomePage> {
                           crossAxisSpacing: 10.0, // Add spacing between items
                           mainAxisSpacing: 10.0, // Add spacing between items
                         ),
-                        itemCount: sneakerimages.length,
+                        itemCount: alldocumentNames.length,
                         itemBuilder: (context, index) {
-                          return Card(
-                            child: Image.network(
-                              sneakerimages[index],
-                              fit: BoxFit.cover,
+                          return InkWell(
+                            onTap: (){
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => Product_Details(
+                                        name: fetchedallname[index],
+                                        isjordan: true,
+                                        isslides: false,
+                                        productid: alldocumentNames[index],
+                                        imageUrl: fetchedallpic[index]),
+                                  ));
+                            },
+                            child: Card(
+                              child: Image.network(
+                                fetchedallpic[index],
+                                fit: BoxFit.cover,
+                              ),
                             ),
                           );
                         },
@@ -586,9 +711,20 @@ class _HomePageState extends State<HomePage> {
                             itemBuilder: (context, index) {
                               return Card(
                                   child: InkWell(
-                                onTap: () {},
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => Product_Details(
+                                            name: fetchedajname[index],
+                                            isjordan: true,
+                                            isslides: false,
+                                            productid: documentNames[index],
+                                            imageUrl: fetchedajpic[index]),
+                                      ));
+                                },
                                 child: Image.network(
-                                  jordans[index],
+                                  fetchedajpic[index],
                                   fit: BoxFit.cover,
                                 ),
                               ));
@@ -610,12 +746,26 @@ class _HomePageState extends State<HomePage> {
                                   mainAxisSpacing:
                                       10.0, // Add spacing between items
                                 ),
-                                itemCount: slides.length,
+                                itemCount: slidesdocumentNames.length,
                                 itemBuilder: (context, index) {
-                                  return Card(
-                                    child: Image.network(
-                                      slides[index],
-                                      fit: BoxFit.cover,
+                                  return InkWell(
+                                    onTap: (){
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => Product_Details(
+                                                name: fetchedslidesname[index],
+                                                isjordan: true,
+                                                isslides: false,
+                                                productid: slidesdocumentNames[index],
+                                                imageUrl: fetchedslidespic[index]),
+                                          ));
+                                    },
+                                    child: Card(
+                                      child: Image.network(
+                                        fetchedslidespic[index],
+                                        fit: BoxFit.cover,
+                                      ),
                                     ),
                                   );
                                 },
