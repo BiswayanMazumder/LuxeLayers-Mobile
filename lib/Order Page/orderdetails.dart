@@ -105,6 +105,9 @@ class _OrderDetailsState extends State<OrderDetails> {
         recentlyviewed = docsnap.data()?['Product ID'] ?? [];
       });
     }
+    if (kDebugMode) {
+      print(recentlyviewed);
+    }
   }
 
   List<dynamic> name = [];
@@ -121,25 +124,33 @@ class _OrderDetailsState extends State<OrderDetails> {
           name.add(docsnap.data()?['name']);
           price.add(int.parse(docsnap.data()?['Price'] ?? '0'));
           image.add(docsnap.data()?['Product Image']);
-          // availability.add(docsnap.data()?['Available']);
-          // isLoaded = true;
         });
       }
     }
   }
+  bool _isLoading = true; // Loading state
+  Future<void> _fetchData() async {
+    setState(() {
+      _isLoading = true;
+    });
 
+    await Future.wait([
+      fetchcartdetails(),
+      fetchratings(),
+      fetchorderdate(),
+      widget.isdelivered ? fetchdeliverydate() : Future.value(),
+      fetchCartProductDetails(),
+    ]);
+
+    setState(() {
+      _isLoading = false;
+    });
+  }
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    fetchcartdetails();
-    fetchratings();
-    fetchrecentlyviewed();
-    fetchorderdate();
-    widget.isdelivered ? fetchdeliverydate() : ();
-    fetchCartProductDetails();
+    _fetchData();
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -212,7 +223,13 @@ class _OrderDetailsState extends State<OrderDetails> {
           )
         ],
       ),
-      body: SingleChildScrollView(
+      body:  _isLoading
+          ? const Center(
+        child: CircularProgressIndicator(
+          color: Colors.black,
+        ),
+      )
+          : SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.only(top: 10),
           child: Column(
@@ -471,9 +488,74 @@ class _OrderDetailsState extends State<OrderDetails> {
                               MaterialPageRoute(
                                 builder: (context) => Product_Details(
                                     name: name[index],
-                                    isjordan: index == 0 ? true : false,
-                                    isslides: index == 1 ? false : true,
-                                    productid: cartitems[index],
+                                    isjordan: false,
+                                    isslides: false,
+                                    productid: recentlyviewed[index],
+                                    imageUrl: image[index]),
+                              ),
+                            );
+                          },
+                          child: Image.network(
+                            image[index],
+                            height: 20,
+                            // width: 0,
+                            fit: BoxFit.cover,
+                            // width: 50, // Width of each image
+                            loadingBuilder: (context, child, progress) {
+                              if (progress == null) {
+                                return child;
+                              } else {
+                                return const Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                              }
+                            },
+                            errorBuilder: (context, error, stackTrace) {
+                              return const Center(
+                                child: Icon(Icons.error, color: Colors.red),
+                              );
+                            },
+                          ),
+                        ));
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 25, right: 25, top: 25),
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        'You might be interested in',
+                        style: GoogleFonts.nunitoSans(
+                          color: Colors.black,
+                          fontWeight: FontWeight.w500,
+                          fontSize: 16,
+                        ),
+                      )
+                    ]),
+              ),
+              const SizedBox(height: 30),
+              SizedBox(
+                height: 150, // Height of the ListView
+                // width: 50,
+                child: ListView.builder(
+                  itemCount: image.length,
+                  scrollDirection: Axis.horizontal,
+                  itemBuilder: (context, index) {
+                    return Padding(
+                        padding:
+                        const EdgeInsets.symmetric(horizontal: 20.0),
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => Product_Details(
+                                    name: name[index],
+                                    isjordan: false,
+                                    isslides: false,
+                                    productid: recentlyviewed[index],
                                     imageUrl: image[index]),
                               ),
                             );

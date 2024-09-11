@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -100,7 +102,8 @@ class _JordanPageState extends State<JordanPage> {
     "AIR JORDAN 1 RETRO LOW OG 'NEUTRAL GREY/METALLIC SILVER-WHITE'",
     "AIR JORDAN 1 LOW MM 'PERFECT PINK/METALLIC GOLD'"
   ];
-
+  List<String>fetchedajname=[];
+  List<String>fetchedajpic=[];
   final TextEditingController _searchController = TextEditingController();
   List<String> _filteredSneakerImages = [];
   List<String> _filteredSneakerNames = [];
@@ -112,7 +115,7 @@ class _JordanPageState extends State<JordanPage> {
 
       // Fetch the collection
       QuerySnapshot querySnapshot =
-          await firestore.collection('sneakers').get();
+          await firestore.collection('Air Jordan').get();
 
       // Extract document IDs and add them to the list
       List<String> names = querySnapshot.docs.map((doc) => doc.id).toList();
@@ -123,18 +126,74 @@ class _JordanPageState extends State<JordanPage> {
       if (kDebugMode) {
         print(documentNames);
       }
+
     } catch (e) {
       if (kDebugMode) {
         print("Error fetching document names: $e");
       }
     }
+    for(int i=0;i<documentNames.length;i++){
+      final docsnap=await _firestore.collection('Air Jordan').doc(documentNames[i]).get();
+      if(docsnap.exists){
+        setState(() {
+          fetchedajname.add(docsnap.data()?['name']);
+          fetchedajpic.add(docsnap.data()?['Product Image']);
+        });
+      }
+    }
+    if (kDebugMode) {
+      print(fetchedajpic);
+    }
+    if (kDebugMode) {
+      print(fetchedajname);
+    }
   }
+  final FirebaseFirestore _firestore=FirebaseFirestore.instance;
+  Future<void> generateRandomNumber(int index) async {
+    const chars =
+        'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    Random rng = Random();
 
+    // Generate a random document name once
+    String docName =
+    List.generate(10, (_) => chars[rng.nextInt(chars.length)]).join();
+
+    // Print the generated document name
+    print(docName);
+
+    // Set the same document name in the 'Slides' collection
+    await _firestore.collection('Air Jordan').doc(docName).set({
+      'Avaliable': true,
+      'Product Image': sneakerimages[index],
+      'name': sneakername[index],
+      'Price': "12500",
+      'UK 6': true,
+      'UK 7': true,
+      'UK 8': true,
+      'UK 9': true,
+      'UK 10': true,
+      'UK 11': true,
+      'UK 12': true,
+    });
+    await _firestore.collection('sneakers').doc(docName).set({
+      'Avaliable': true,
+      'Product Image': sneakerimages[index],
+      'name': sneakername[index],
+      'Price': "12500",
+      'UK 6': true,
+      'UK 7': true,
+      'UK 8': true,
+      'UK 9': true,
+      'UK 10': true,
+      'UK 11': true,
+      'UK 12': true,
+    });
+  }
   @override
   void initState() {
     super.initState();
-    _filteredSneakerImages = sneakerimages;
-    _filteredSneakerNames = sneakername;
+    _filteredSneakerImages = fetchedajpic;
+    _filteredSneakerNames = fetchedajname;
     fetchDocumentNames();
     _searchController.addListener(_filterSneakers);
   }
@@ -231,11 +290,11 @@ class _JordanPageState extends State<JordanPage> {
                       context,
                       MaterialPageRoute(
                         builder: (context) => Product_Details(
-                            name: sneakername[index],
+                            name: fetchedajname[index],
                             isjordan: true,
                             isslides: false,
                             productid: documentNames[index],
-                            imageUrl: sneakerimages[index]),
+                            imageUrl: fetchedajpic[index]),
                       ));
                 },
                 child: Image.network(

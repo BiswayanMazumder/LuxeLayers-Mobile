@@ -55,8 +55,8 @@ class _JordanPageState extends State<SlidesPage> {
   @override
   void initState() {
     super.initState();
-    _filteredSneakerImages = sneakerimages;
-    _filteredSneakerNames = sneakername;
+    _filteredSneakerImages = fetchedajpic;
+    _filteredSneakerNames = fetchedajname;
     _searchController.addListener(_filterSneakers);
     fetchDocumentNames();
   }
@@ -135,6 +135,8 @@ class _JordanPageState extends State<SlidesPage> {
   // List<String> _filteredSneakerImages = [];
   // List<String> _filteredSneakerNames = [];
   List<String> documentNames = [];
+  List<String>fetchedajname=[];
+  List<String>fetchedajpic=[];
   Future<void> fetchDocumentNames() async {
     try {
       // Access the Firestore instance
@@ -156,6 +158,28 @@ class _JordanPageState extends State<SlidesPage> {
       if (kDebugMode) {
         print("Error fetching document names: $e");
       }
+
+    }
+    try{
+      for(int i=0;i<documentNames.length;i++){
+        final docsnap=await _firestore.collection('Slides').doc(documentNames[i]).get();
+        if(docsnap.exists){
+          setState(() {
+            fetchedajname.add(docsnap.data()?['name']);
+            fetchedajpic.add(docsnap.data()?['Product Image']);
+          });
+        }
+      }
+    }catch(e){
+      if (kDebugMode) {
+        print(e);
+      }
+    }
+    if (kDebugMode) {
+      print(fetchedajpic);
+    }
+    if (kDebugMode) {
+      print(fetchedajname);
     }
   }
 
@@ -223,11 +247,11 @@ class _JordanPageState extends State<SlidesPage> {
                       context,
                       MaterialPageRoute(
                         builder: (context) => Product_Details(
-                            name: sneakername[index],
+                            name: fetchedajname[index],
                             isjordan: false,
                             isslides: true,
                             productid: documentNames[index],
-                            imageUrl: sneakerimages[index]),
+                            imageUrl: fetchedajpic[index]),
                       ));
                 },
                 child: Image.network(

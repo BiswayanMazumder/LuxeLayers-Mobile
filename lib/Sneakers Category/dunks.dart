@@ -47,11 +47,13 @@ class _JordanPageState extends State<DunksPage> {
   final TextEditingController _searchController = TextEditingController();
   List<String> _filteredSneakerImages = [];
   List<String> _filteredSneakerNames = [];
+  List<String>fetchedajname=[];
+  List<String>fetchedajpic=[];
   @override
   void initState() {
     super.initState();
-    _filteredSneakerImages = sneakerimages;
-    _filteredSneakerNames = sneakername;
+    _filteredSneakerImages = fetchedajpic;
+    _filteredSneakerNames = fetchedajname;
     _searchController.addListener(_filterSneakers);
     fetchDocumentNames();
   }
@@ -125,6 +127,15 @@ class _JordanPageState extends State<DunksPage> {
     } catch (e) {
       if (kDebugMode) {
         print("Error fetching document names: $e");
+      }
+    }
+    for(int i=0;i<documentNames.length;i++){
+      final docsnap=await _firestore.collection('Dunks').doc(documentNames[i]).get();
+      if(docsnap.exists){
+        setState(() {
+          fetchedajname.add(docsnap.data()?['name']);
+          fetchedajpic.add(docsnap.data()?['Product Image']);
+        });
       }
     }
   }
@@ -216,11 +227,11 @@ class _JordanPageState extends State<DunksPage> {
                       context,
                       MaterialPageRoute(
                         builder: (context) => Product_Details(
-                            name: sneakername[index],
+                            name: fetchedajname[index],
                             isjordan: false,
                             isslides: true,
                             productid: documentNames[index],
-                            imageUrl: sneakerimages[index]),
+                            imageUrl: fetchedajpic[index]),
                       ));
                 },
                 child: Image.network(

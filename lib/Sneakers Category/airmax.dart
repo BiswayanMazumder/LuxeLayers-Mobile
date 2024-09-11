@@ -69,6 +69,8 @@ class _AirmaxPageState extends State<AirmaxPage> {
   List<String> _filteredSneakerImages = [];
   List<String> _filteredSneakerNames = [];
   List<String> documentNames = [];
+  List<String>fetchedajname=[];
+  List<String>fetchedajpic=[];
   Future<void> fetchDocumentNames() async {
     try {
       // Access the Firestore instance
@@ -89,6 +91,15 @@ class _AirmaxPageState extends State<AirmaxPage> {
     } catch (e) {
       if (kDebugMode) {
         print("Error fetching document names: $e");
+      }
+    }
+    for(int i=0;i<documentNames.length;i++){
+      final docsnap=await _firestore.collection('airmax').doc(documentNames[i]).get();
+      if(docsnap.exists){
+        setState(() {
+          fetchedajname.add(docsnap.data()?['name']);
+          fetchedajpic.add(docsnap.data()?['Product Image']);
+        });
       }
     }
   }
@@ -139,8 +150,8 @@ class _AirmaxPageState extends State<AirmaxPage> {
   @override
   void initState() {
     super.initState();
-    _filteredSneakerImages = sneakerimages;
-    _filteredSneakerNames = sneakername;
+    _filteredSneakerImages = fetchedajpic;
+    _filteredSneakerNames = fetchedajname;
     fetchDocumentNames();
     _searchController.addListener(_filterSneakers);
   }
@@ -237,11 +248,11 @@ class _AirmaxPageState extends State<AirmaxPage> {
                       context,
                       MaterialPageRoute(
                         builder: (context) => Product_Details(
-                            name: sneakername[index],
+                            name: fetchedajname[index],
                             isjordan: false,
                             isslides: true,
                             productid: documentNames[index],
-                            imageUrl: sneakerimages[index]),
+                            imageUrl: fetchedajpic[index]),
                       ));
                 },
                 child: Image.network(

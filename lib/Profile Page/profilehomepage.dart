@@ -237,7 +237,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 ],
               ),
               const SizedBox(height: 20),
-              Padding(
+             _auth.currentUser!.emailVerified?Padding(
                 padding: const EdgeInsets.all(25.0),
                 child: GestureDetector(
                   onTap: () async {
@@ -296,7 +296,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     maxLines: 1,
                   ),
                 ),
-              ),
+              ):Container(),
               const SizedBox(height: 20),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
