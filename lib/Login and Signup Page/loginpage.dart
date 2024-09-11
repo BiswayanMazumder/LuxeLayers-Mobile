@@ -19,20 +19,14 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _passwordController = TextEditingController();
   bool showpw = false;
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  int? _selectedindex;
-  void getlanguage() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _selectedindex = prefs.getInt('Language');
-    });
-    print(_selectedindex);
-  }
+  int _selectedindex=0;
+
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    getlanguage();
+    // getlanguage();
   }
 
   @override

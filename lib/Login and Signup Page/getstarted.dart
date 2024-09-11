@@ -12,20 +12,12 @@ class GetStartedPage extends StatefulWidget {
 }
 
 class _GetStartedPageState extends State<GetStartedPage> {
-  int? _selectedindex;
-  void getlanguage() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _selectedindex = prefs.getInt('Language');
-    });
-    print(_selectedindex);
-  }
-
+  int _selectedindex=0;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    getlanguage();
+    // getlanguage();
   }
 
   @override
