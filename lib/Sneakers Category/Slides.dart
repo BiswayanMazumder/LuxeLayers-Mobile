@@ -64,18 +64,18 @@ class _JordanPageState extends State<SlidesPage> {
   void _filterSneakers() {
     final query = _searchController.text.toLowerCase();
     setState(() {
-      _filteredSneakerImages = sneakerimages
+      _filteredSneakerImages = fetchedajpic
           .asMap()
           .entries
           .where(
-              (entry) => sneakername[entry.key].toLowerCase().contains(query))
+              (entry) => fetchedajname[entry.key].toLowerCase().contains(query))
           .map((entry) => entry.value)
           .toList();
-      _filteredSneakerNames = sneakername
+      _filteredSneakerNames = fetchedajname
           .asMap()
           .entries
           .where(
-              (entry) => sneakername[entry.key].toLowerCase().contains(query))
+              (entry) => fetchedajname[entry.key].toLowerCase().contains(query))
           .map((entry) => entry.value)
           .toList();
     });
