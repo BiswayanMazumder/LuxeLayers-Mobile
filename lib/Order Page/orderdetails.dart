@@ -7,7 +7,9 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:luxelayers/Add%20To%20Cart%20Page/cartpage.dart';
+import 'package:luxelayers/Order%20Page/ordercancel.dart';
 import 'package:luxelayers/Sneaker%20Detail%20Page/productdetails.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class OrderDetails extends StatefulWidget {
   final String name;
@@ -16,15 +18,15 @@ class OrderDetails extends StatefulWidget {
   final bool isdelivered;
   final int price;
   final String productid;
-  const OrderDetails({
-    Key? key,
-    required this.name,
-    required this.orderid,
-    required this.imageUrl,
-    required this.isdelivered,
-    required this.price,
-    required this.productid
-  }) : super(key: key);
+  const OrderDetails(
+      {Key? key,
+      required this.name,
+      required this.orderid,
+      required this.imageUrl,
+      required this.isdelivered,
+      required this.price,
+      required this.productid})
+      : super(key: key);
 
   @override
   State<OrderDetails> createState() => _OrderDetailsState();
@@ -82,16 +84,17 @@ class _OrderDetailsState extends State<OrderDetails> {
       print(formattedorderDate);
     }
   }
-  bool isshipped=false;
-  bool isoutdelivery=false;
+
+  bool isshipped = false;
+  bool isoutdelivery = false;
   Future<void> fetchshippingdate() async {
     final docsnap =
-    await _firestore.collection('Order Details').doc(widget.orderid).get();
+        await _firestore.collection('Order Details').doc(widget.orderid).get();
     if (docsnap.exists) {
       setState(() {
         // deliverdate = (docsnap.data()?['Delivery Date'] as Timestamp).toDate();
         shippingdate = (docsnap.data()?['shipped'] as Timestamp).toDate();
-        isshipped=docsnap.data()?['Shipped'];
+        isshipped = docsnap.data()?['Shipped'];
         // formattedDate = DateFormat('MMM dd').format(deliverdate!);
         formattedshippingDate = DateFormat('MMM dd').format(shippingdate!);
       });
@@ -100,22 +103,26 @@ class _OrderDetailsState extends State<OrderDetails> {
       print(formattedshippingDate);
     }
   }
+
   Future<void> fetchoutdeliverydate() async {
     final docsnap =
-    await _firestore.collection('Order Details').doc(widget.orderid).get();
+        await _firestore.collection('Order Details').doc(widget.orderid).get();
     if (docsnap.exists) {
       setState(() {
         // deliverdate = (docsnap.data()?['Delivery Date'] as Timestamp).toDate();
-        outdeliverydate = (docsnap.data()?['Out_Delivery_Time'] as Timestamp).toDate();
-        isoutdelivery=docsnap.data()?['Out_Delivery'];
+        outdeliverydate =
+            (docsnap.data()?['Out_Delivery_Time'] as Timestamp).toDate();
+        isoutdelivery = docsnap.data()?['Out_Delivery'];
         // formattedDate = DateFormat('MMM dd').format(deliverdate!);
-        formattedoutdeliveryDate = DateFormat('MMM dd').format(outdeliverydate!);
+        formattedoutdeliveryDate =
+            DateFormat('MMM dd').format(outdeliverydate!);
       });
     }
     if (kDebugMode) {
       print(formattedshippingDate);
     }
   }
+
   Future<void> fetchdeliverydate() async {
     final docsnap =
         await _firestore.collection('Order Details').doc(widget.orderid).get();
@@ -165,6 +172,7 @@ class _OrderDetailsState extends State<OrderDetails> {
       }
     }
   }
+
   bool _isLoading = true; // Loading state
   Future<void> _fetchData() async {
     setState(() {
@@ -183,6 +191,7 @@ class _OrderDetailsState extends State<OrderDetails> {
       _isLoading = false;
     });
   }
+
   @override
   void initState() {
     super.initState();
@@ -190,6 +199,7 @@ class _OrderDetailsState extends State<OrderDetails> {
     fetchshippingdate();
     fetchoutdeliverydate();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -262,542 +272,580 @@ class _OrderDetailsState extends State<OrderDetails> {
           )
         ],
       ),
-      body:  _isLoading
+      body: _isLoading
           ? const Center(
-        child: CircularProgressIndicator(
-          color: Colors.black,
-        ),
-      )
+              child: CircularProgressIndicator(
+                color: Colors.black,
+              ),
+            )
           : SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.only(top: 10),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 25, right: 25),
-                child: Text(
-                  'Order ID - ${widget.orderid}',
-                  style: GoogleFonts.nunitoSans(
-                      color: Colors.grey,
-                      fontWeight: FontWeight.w500,
-                      fontSize: 16),
-                ),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              const Divider(
-                color: Colors.grey,
-                thickness: 0.5,
-                indent: 0,
-              ),
-              const SizedBox(
-                height: 5,
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 25, right: 25),
-                child: InkWell(
-                  onTap: (){
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => Product_Details(
-                        name: widget.name,
-                        productid: widget.productid,
-                        imageUrl: widget.imageUrl,
-                        isjordan: false,
-                        isslides: false),));
-                  },
-                  child: Row(
-                    children: [
-                      Expanded(
-                          child: Column(
-                            mainAxisAlignment:MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            widget.name,
-                            overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.nunitoSans(
-                              fontWeight: FontWeight.w600,
-                            ),
-                            maxLines: 3,
-                          ),
-                        ],
-                      )),
-                      const SizedBox(
-                        width: 30,
-                      ),
-                      Image.network(
-                        widget.imageUrl,
-                        width: 100,
-                        height: 100,
-                        fit: BoxFit.cover,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 25, right: 25),
-                child: Text(
-                  'Seller: LuxeLayers',
-                  style: GoogleFonts.nunitoSans(
-                    fontWeight: FontWeight.w400,
-                    color: Colors.grey,
-                  ),
-                ),
-              ),
-              const SizedBox(
-                height: 5,
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 25, right: 25),
-                child: Text(
-                  '₹${widget.price}',
-                  style: GoogleFonts.nunitoSans(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              const SizedBox(
-                height: 5,
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 25, right: 25),
-                child: Text(
-                  'Estimated delivery by $formattedorderDate',
-                  style: GoogleFonts.nunitoSans(
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              const Divider(
-                color: Colors.grey,
-                thickness: 0.5,
-                indent: 0,
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 25, right: 25),
+              child: Padding(
+                padding: const EdgeInsets.only(top: 10),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      children: [
-                        const CircleAvatar(
-                          radius: 15,
-                          backgroundColor: Colors.green,
-                          child: Icon(
-                            Icons.check,
-                            color: Colors.white,
-                          ),
-                        ),
-                        Text(
-                          '  Order confirmed on $formattedorderDate',
-                          style: GoogleFonts.nunitoSans(
-                              color: Colors.black, fontWeight: FontWeight.w600),
-                        )
-                      ],
-                    ),
                     Padding(
-                      padding: const EdgeInsets.only(left: 13),
-                      child: SizedBox(
-                          height: 80,
-                          child: Container(
-                            width: 3,
-                            decoration: BoxDecoration(
-                              color: isshipped ? Colors.green : null,
-                              gradient: isshipped
-                                  ? null
-                                  : const LinearGradient(
-                                      colors: [Colors.green, Colors.red],
-                                      begin: Alignment.topCenter,
-                                      end: Alignment.bottomCenter,
-                                    ),
-                            ),
-                          )),
-                    ),
-                    Row(
-                      children: [
-                        CircleAvatar(
-                          radius: 15,
-                          backgroundColor:
-                          isshipped ? Colors.green : Colors.red,
-                          child: Icon(
-                            isshipped ? Icons.check : Icons.close,
-                            color: Colors.white,
-                          ),
-                        ),
-                        isshipped
-                            ? Text(
-                                '  Order shipped on $formattedshippingDate',
-                                style: GoogleFonts.nunitoSans(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w600),
-                              )
-                            : Text(
-                                '  Expected to ship at the earliest',
-                                style: GoogleFonts.nunitoSans(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w600),
-                              )
-                      ],
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 13),
-                      child: SizedBox(
-                          height: 80,
-                          child: Container(
-                            width: 3,
-                            decoration: BoxDecoration(
-                              color: widget.isdelivered ? Colors.green : null,
-                              gradient: widget.isdelivered
-                                  ? null
-                                  : const LinearGradient(
-                                colors: [Colors.green, Colors.red],
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                              ),
-                            ),
-                          )),
-                    ),
-                    Row(
-                      children: [
-                        CircleAvatar(
-                          radius: 15,
-                          backgroundColor:
-                          isoutdelivery ? Colors.green : Colors.red,
-                          child: Icon(
-                            isoutdelivery ? Icons.check : Icons.close,
-                            color: Colors.white,
-                          ),
-                        ),
-                        isoutdelivery
-                            ? Text(
-                          '  Order out for delivery on $formattedoutdeliveryDate',
-                          style: GoogleFonts.nunitoSans(
-                              color: Colors.black,
-                              fontWeight: FontWeight.w600),
-                        )
-                            : Text(
-                          '  Item not yet out of delivery',
-                          style: GoogleFonts.nunitoSans(
-                              color: Colors.black,
-                              fontWeight: FontWeight.w600),
-                        )
-                      ],
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 13),
-                      child: SizedBox(
-                          height: 80,
-                          child: Container(
-                            width: 3,
-                            decoration: BoxDecoration(
-                              color: widget.isdelivered ? Colors.green : null,
-                              gradient: widget.isdelivered
-                                  ? null
-                                  : const LinearGradient(
-                                colors: [Colors.green, Colors.red],
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                              ),
-                            ),
-                          )),
-                    ),
-                    Row(
-                      children: [
-                        CircleAvatar(
-                          radius: 15,
-                          backgroundColor:
-                          widget.isdelivered ? Colors.green : Colors.red,
-                          child: Icon(
-                            widget.isdelivered ? Icons.check : Icons.close,
-                            color: Colors.white,
-                          ),
-                        ),
-                        widget.isdelivered
-                            ? Text(
-                          '  Order confirmed on $formattedDate',
-                          style: GoogleFonts.nunitoSans(
-                              color: Colors.black,
-                              fontWeight: FontWeight.w600),
-                        )
-                            : Text(
-                          '  Order yet to be delivered',
-                          style: GoogleFonts.nunitoSans(
-                              color: Colors.black,
-                              fontWeight: FontWeight.w600),
-                        )
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-             widget.isdelivered? const SizedBox(
-                height: 20,
-              ):Container(),
-             widget.isdelivered? Center(
-                child: Container(
-                  width: MediaQuery.sizeOf(context).width-5,
-                  height: 50,
-                  decoration:  BoxDecoration(
-                    color: Colors.white,
-                    border: Border.all(
-                      color: Colors.black,
-                      width: 0.5
-                    )
-                  ),
-                  child: Center(
-                    child: InkWell(
-                      onTap: (){},
-                      child: Text('Return Item',style: GoogleFonts.nunitoSans(
-                        color: Colors.black,
-                        fontWeight: FontWeight.w600
-                      ),),
-                    ),
-                  ),
-                ),
-              ):Container(),
-              !widget.isdelivered? const SizedBox(
-                height: 20,
-              ):Container(),
-              !widget.isdelivered? Center(
-                child: Container(
-                  width: MediaQuery.sizeOf(context).width-5,
-                  height: 50,
-                  decoration:  BoxDecoration(
-                      color: Colors.white,
-                      border: Border.all(
-                          color: Colors.black,
-                          width: 0.5
-                      )
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      InkWell(
-                          onTap: (){},
-                          child: Text('Return Item',style: GoogleFonts.nunitoSans(
-                              color: Colors.black,
-                              fontWeight: FontWeight.w600
-                          ),),
-                        ),
-                      SizedBox(
-                          height: 50,
-                          child: Container(
-                            width: 0.5,
-                            decoration: const BoxDecoration(
-                              color: Colors.black
-                            ),
-                          )),
-                      InkWell(
-                        onTap: (){},
-                        child: Text('Cancel Item',style: GoogleFonts.nunitoSans(
-                            color: Colors.black,
-                            fontWeight: FontWeight.w600
-                        ),),
+                      padding: const EdgeInsets.only(left: 25, right: 25),
+                      child: Text(
+                        'Order ID - ${widget.orderid}',
+                        style: GoogleFonts.nunitoSans(
+                            color: Colors.grey,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 16),
                       ),
-                    ],
-                  )
-                ),
-              ):Container(),
-              const SizedBox(
-                height: 20,
-              ),
-              widget.isdelivered
-                  ? Padding(
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    const Divider(
+                      color: Colors.grey,
+                      thickness: 0.5,
+                      indent: 0,
+                    ),
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 25, right: 25),
+                      child: InkWell(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => Product_Details(
+                                    name: widget.name,
+                                    productid: widget.productid,
+                                    imageUrl: widget.imageUrl,
+                                    isjordan: false,
+                                    isslides: false),
+                              ));
+                        },
+                        child: Row(
+                          children: [
+                            Expanded(
+                                child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  widget.name,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: GoogleFonts.nunitoSans(
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                  maxLines: 3,
+                                ),
+                              ],
+                            )),
+                            const SizedBox(
+                              width: 30,
+                            ),
+                            Image.network(
+                              widget.imageUrl,
+                              width: 100,
+                              height: 100,
+                              fit: BoxFit.cover,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 25, right: 25),
+                      child: Text(
+                        'Seller: LuxeLayers',
+                        style: GoogleFonts.nunitoSans(
+                          fontWeight: FontWeight.w400,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 25, right: 25),
+                      child: Text(
+                        '₹${widget.price}',
+                        style: GoogleFonts.nunitoSans(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 25, right: 25),
+                      child: Text(
+                        'Estimated delivery by $formattedorderDate',
+                        style: GoogleFonts.nunitoSans(
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    const Divider(
+                      color: Colors.grey,
+                      thickness: 0.5,
+                      indent: 0,
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Padding(
                       padding: const EdgeInsets.only(left: 25, right: 25),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            'Rate your experience',
-                            style: GoogleFonts.nunitoSans(
-                                fontWeight: FontWeight.w600,
-                                color: Colors.grey,
-                                fontSize: 16),
-                          ),
-                          const SizedBox(
-                            height: 15,
-                          ),
-                          Center(
-                            child: RatingBar.builder(
-                              initialRating: ratings,
-                              minRating: 1,
-                              direction: Axis.horizontal,
-                              allowHalfRating: true,
-                              itemCount: 5,
-                              glowColor: Colors.black,
-                              glow: true,
-                              itemPadding:
-                                  const EdgeInsets.symmetric(horizontal: 4.0),
-                              itemBuilder: (context, _) => const Icon(
-                                Icons.star,
-                                color: Colors.green,
+                          Row(
+                            children: [
+                              const CircleAvatar(
+                                radius: 15,
+                                backgroundColor: Colors.green,
+                                child: Icon(
+                                  Icons.check,
+                                  color: Colors.white,
+                                ),
                               ),
-                              onRatingUpdate: (rating) async {
-                                final user = _auth.currentUser;
-                                await _firestore
-                                    .collection(widget.orderid)
-                                    .doc(user!.uid)
-                                    .set({'Rating Given': rating});
-                                await _firestore
-                                    .collection('Ratings')
-                                    .doc(widget.orderid)
-                                    .set({'Rating Given': rating});
-                                await fetchratings();
-                                if (kDebugMode) {
-                                  print(rating);
-                                }
-                              },
-                            ),
-                          )
+                              Text(
+                                '  Order confirmed on $formattedorderDate',
+                                style: GoogleFonts.nunitoSans(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w600),
+                              )
+                            ],
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 13),
+                            child: SizedBox(
+                                height: 80,
+                                child: Container(
+                                  width: 3,
+                                  decoration: BoxDecoration(
+                                    color: isshipped ? Colors.green : null,
+                                    gradient: isshipped
+                                        ? null
+                                        : const LinearGradient(
+                                            colors: [Colors.green, Colors.red],
+                                            begin: Alignment.topCenter,
+                                            end: Alignment.bottomCenter,
+                                          ),
+                                  ),
+                                )),
+                          ),
+                          Row(
+                            children: [
+                              CircleAvatar(
+                                radius: 15,
+                                backgroundColor:
+                                    isshipped ? Colors.green : Colors.red,
+                                child: Icon(
+                                  isshipped ? Icons.check : Icons.close,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              isshipped
+                                  ? Text(
+                                      '  Order shipped on $formattedshippingDate',
+                                      style: GoogleFonts.nunitoSans(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.w600),
+                                    )
+                                  : Text(
+                                      '  Expected to ship at the earliest',
+                                      style: GoogleFonts.nunitoSans(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.w600),
+                                    )
+                            ],
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 13),
+                            child: SizedBox(
+                                height: 80,
+                                child: Container(
+                                  width: 3,
+                                  decoration: BoxDecoration(
+                                    color: widget.isdelivered
+                                        ? Colors.green
+                                        : null,
+                                    gradient: widget.isdelivered
+                                        ? null
+                                        : const LinearGradient(
+                                            colors: [Colors.green, Colors.red],
+                                            begin: Alignment.topCenter,
+                                            end: Alignment.bottomCenter,
+                                          ),
+                                  ),
+                                )),
+                          ),
+                          Row(
+                            children: [
+                              CircleAvatar(
+                                radius: 15,
+                                backgroundColor:
+                                    isoutdelivery ? Colors.green : Colors.red,
+                                child: Icon(
+                                  isoutdelivery ? Icons.check : Icons.close,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              isoutdelivery
+                                  ? Text(
+                                      '  Order out for delivery on $formattedoutdeliveryDate',
+                                      style: GoogleFonts.nunitoSans(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.w600),
+                                    )
+                                  : Text(
+                                      '  Item not yet out of delivery',
+                                      style: GoogleFonts.nunitoSans(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.w600),
+                                    )
+                            ],
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 13),
+                            child: SizedBox(
+                                height: 80,
+                                child: Container(
+                                  width: 3,
+                                  decoration: BoxDecoration(
+                                    color: widget.isdelivered
+                                        ? Colors.green
+                                        : null,
+                                    gradient: widget.isdelivered
+                                        ? null
+                                        : const LinearGradient(
+                                            colors: [Colors.green, Colors.red],
+                                            begin: Alignment.topCenter,
+                                            end: Alignment.bottomCenter,
+                                          ),
+                                  ),
+                                )),
+                          ),
+                          Row(
+                            children: [
+                              CircleAvatar(
+                                radius: 15,
+                                backgroundColor: widget.isdelivered
+                                    ? Colors.green
+                                    : Colors.red,
+                                child: Icon(
+                                  widget.isdelivered
+                                      ? Icons.check
+                                      : Icons.close,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              widget.isdelivered
+                                  ? Text(
+                                      '  Order confirmed on $formattedDate',
+                                      style: GoogleFonts.nunitoSans(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.w600),
+                                    )
+                                  : Text(
+                                      '  Order yet to be delivered',
+                                      style: GoogleFonts.nunitoSans(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.w600),
+                                    )
+                            ],
+                          ),
                         ],
                       ),
-                    )
-                  : Container(),
-              Padding(
-                padding: const EdgeInsets.only(left: 25, right: 25, top: 25),
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
-                        'Recently Viewed Items',
-                        style: GoogleFonts.nunitoSans(
-                          color: Colors.black,
-                          fontWeight: FontWeight.w500,
-                          fontSize: 16,
-                        ),
-                      )
-                    ]),
-              ),
-              const SizedBox(height: 30),
-              SizedBox(
-                height: 150, // Height of the ListView
-                // width: 50,
-                child: ListView.builder(
-                  itemCount: image.length,
-                  scrollDirection: Axis.horizontal,
-                  itemBuilder: (context, index) {
-                    return Padding(
-                        padding:
-                        const EdgeInsets.symmetric(horizontal: 20.0),
-                        child: InkWell(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => Product_Details(
-                                    name: name[index],
-                                    isjordan: false,
-                                    isslides: false,
-                                    productid: recentlyviewed[index],
-                                    imageUrl: image[index]),
-                              ),
-                            );
-                          },
-                          child: Image.network(
-                            image[index],
+                    ),
+                    widget.isdelivered
+                        ? const SizedBox(
                             height: 20,
-                            // width: 0,
-                            fit: BoxFit.cover,
-                            // width: 50, // Width of each image
-                            loadingBuilder: (context, child, progress) {
-                              if (progress == null) {
-                                return child;
-                              } else {
-                                return const Center(
-                                  child: CircularProgressIndicator(),
-                                );
-                              }
-                            },
-                            errorBuilder: (context, error, stackTrace) {
-                              return const Center(
-                                child: Icon(Icons.error, color: Colors.red),
-                              );
-                            },
-                          ),
-                        ));
-                  },
+                          )
+                        : Container(),
+                    widget.isdelivered
+                        ? Center(
+                            child: Container(
+                              width: MediaQuery.sizeOf(context).width - 5,
+                              height: 50,
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  border: Border.all(
+                                      color: Colors.black, width: 0.5)),
+                              child: Center(
+                                child: InkWell(
+                                  onTap: () {},
+                                  child: Text(
+                                    'Return Item',
+                                    style: GoogleFonts.nunitoSans(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w600),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          )
+                        : Container(),
+                    !widget.isdelivered
+                        ? const SizedBox(
+                            height: 20,
+                          )
+                        : Container(),
+                    !widget.isdelivered
+                        ? Center(
+                            child: Container(
+                                width: MediaQuery.sizeOf(context).width - 5,
+                                height: 50,
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    border: Border.all(
+                                        color: Colors.black, width: 0.5)),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    InkWell(
+                                      onTap: () async{
+
+                                      },
+                                      child: Text(
+                                        'Need Help?',
+                                        style: GoogleFonts.nunitoSans(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.w600),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                        height: 50,
+                                        child: Container(
+                                          width: 0.5,
+                                          decoration: const BoxDecoration(
+                                              color: Colors.black),
+                                        )),
+                                    InkWell(
+                                      onTap: () async {
+                                        final SharedPreferences prefs =
+                                        await SharedPreferences.getInstance();
+                                        prefs.setString('Order ID', widget.orderid);
+                                        prefs.setString('Product Image', widget.imageUrl);
+                                        prefs.setString('Product Name', widget.name);
+                                        prefs.setInt('Product Price',widget.price);
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                   OrderCancel(),
+                                            ));
+                                      },
+                                      child: Text(
+                                        'Cancel Item',
+                                        style: GoogleFonts.nunitoSans(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.w600),
+                                      ),
+                                    ),
+                                  ],
+                                )),
+                          )
+                        : Container(),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    widget.isdelivered
+                        ? Padding(
+                            padding: const EdgeInsets.only(left: 25, right: 25),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Rate your experience',
+                                  style: GoogleFonts.nunitoSans(
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.grey,
+                                      fontSize: 16),
+                                ),
+                                const SizedBox(
+                                  height: 15,
+                                ),
+                                Center(
+                                  child: RatingBar.builder(
+                                    initialRating: ratings,
+                                    minRating: 1,
+                                    direction: Axis.horizontal,
+                                    allowHalfRating: true,
+                                    itemCount: 5,
+                                    glowColor: Colors.black,
+                                    glow: true,
+                                    itemPadding: const EdgeInsets.symmetric(
+                                        horizontal: 4.0),
+                                    itemBuilder: (context, _) => const Icon(
+                                      Icons.star,
+                                      color: Colors.green,
+                                    ),
+                                    onRatingUpdate: (rating) async {
+                                      final user = _auth.currentUser;
+                                      await _firestore
+                                          .collection(widget.orderid)
+                                          .doc(user!.uid)
+                                          .set({'Rating Given': rating});
+                                      await _firestore
+                                          .collection('Ratings')
+                                          .doc(widget.orderid)
+                                          .set({'Rating Given': rating});
+                                      await fetchratings();
+                                      if (kDebugMode) {
+                                        print(rating);
+                                      }
+                                    },
+                                  ),
+                                )
+                              ],
+                            ),
+                          )
+                        : Container(),
+                    Padding(
+                      padding:
+                          const EdgeInsets.only(left: 25, right: 25, top: 25),
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Recently Viewed Items',
+                              style: GoogleFonts.nunitoSans(
+                                color: Colors.black,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 16,
+                              ),
+                            )
+                          ]),
+                    ),
+                    const SizedBox(height: 30),
+                    SizedBox(
+                      height: 150, // Height of the ListView
+                      // width: 50,
+                      child: ListView.builder(
+                        itemCount: image.length,
+                        scrollDirection: Axis.horizontal,
+                        itemBuilder: (context, index) {
+                          return Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 20.0),
+                              child: InkWell(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => Product_Details(
+                                          name: name[index],
+                                          isjordan: false,
+                                          isslides: false,
+                                          productid: recentlyviewed[index],
+                                          imageUrl: image[index]),
+                                    ),
+                                  );
+                                },
+                                child: Image.network(
+                                  image[index],
+                                  height: 20,
+                                  // width: 0,
+                                  fit: BoxFit.cover,
+                                  // width: 50, // Width of each image
+                                  loadingBuilder: (context, child, progress) {
+                                    if (progress == null) {
+                                      return child;
+                                    } else {
+                                      return const Center(
+                                        child: CircularProgressIndicator(),
+                                      );
+                                    }
+                                  },
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return const Center(
+                                      child:
+                                          Icon(Icons.error, color: Colors.red),
+                                    );
+                                  },
+                                ),
+                              ));
+                        },
+                      ),
+                    ),
+                    Padding(
+                      padding:
+                          const EdgeInsets.only(left: 25, right: 25, top: 25),
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              'You might be interested in',
+                              style: GoogleFonts.nunitoSans(
+                                color: Colors.black,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 16,
+                              ),
+                            )
+                          ]),
+                    ),
+                    const SizedBox(height: 30),
+                    SizedBox(
+                      height: 150, // Height of the ListView
+                      // width: 50,
+                      child: ListView.builder(
+                        itemCount: image.length,
+                        scrollDirection: Axis.horizontal,
+                        itemBuilder: (context, index) {
+                          return Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 20.0),
+                              child: InkWell(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => Product_Details(
+                                          name: name[index],
+                                          isjordan: false,
+                                          isslides: false,
+                                          productid: recentlyviewed[index],
+                                          imageUrl: image[index]),
+                                    ),
+                                  );
+                                },
+                                child: Image.network(
+                                  image[index],
+                                  height: 20,
+                                  // width: 0,
+                                  fit: BoxFit.cover,
+                                  // width: 50, // Width of each image
+                                  loadingBuilder: (context, child, progress) {
+                                    if (progress == null) {
+                                      return child;
+                                    } else {
+                                      return const Center(
+                                        child: CircularProgressIndicator(),
+                                      );
+                                    }
+                                  },
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return const Center(
+                                      child:
+                                          Icon(Icons.error, color: Colors.red),
+                                    );
+                                  },
+                                ),
+                              ));
+                        },
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.only(left: 25, right: 25, top: 25),
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
-                        'You might be interested in',
-                        style: GoogleFonts.nunitoSans(
-                          color: Colors.black,
-                          fontWeight: FontWeight.w500,
-                          fontSize: 16,
-                        ),
-                      )
-                    ]),
-              ),
-              const SizedBox(height: 30),
-              SizedBox(
-                height: 150, // Height of the ListView
-                // width: 50,
-                child: ListView.builder(
-                  itemCount: image.length,
-                  scrollDirection: Axis.horizontal,
-                  itemBuilder: (context, index) {
-                    return Padding(
-                        padding:
-                        const EdgeInsets.symmetric(horizontal: 20.0),
-                        child: InkWell(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => Product_Details(
-                                    name: name[index],
-                                    isjordan: false,
-                                    isslides: false,
-                                    productid: recentlyviewed[index],
-                                    imageUrl: image[index]),
-                              ),
-                            );
-                          },
-                          child: Image.network(
-                            image[index],
-                            height: 20,
-                            // width: 0,
-                            fit: BoxFit.cover,
-                            // width: 50, // Width of each image
-                            loadingBuilder: (context, child, progress) {
-                              if (progress == null) {
-                                return child;
-                              } else {
-                                return const Center(
-                                  child: CircularProgressIndicator(),
-                                );
-                              }
-                            },
-                            errorBuilder: (context, error, stackTrace) {
-                              return const Center(
-                                child: Icon(Icons.error, color: Colors.red),
-                              );
-                            },
-                          ),
-                        ));
-                  },
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
+            ),
     );
   }
 }
