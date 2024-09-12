@@ -540,8 +540,76 @@ class _OrderDetailsState extends State<OrderDetails> {
                   ],
                 ),
               ),
+             widget.isdelivered? const SizedBox(
+                height: 20,
+              ):Container(),
+             widget.isdelivered? Center(
+                child: Container(
+                  width: MediaQuery.sizeOf(context).width-5,
+                  height: 50,
+                  decoration:  BoxDecoration(
+                    color: Colors.white,
+                    border: Border.all(
+                      color: Colors.black,
+                      width: 0.5
+                    )
+                  ),
+                  child: Center(
+                    child: InkWell(
+                      onTap: (){},
+                      child: Text('Return Item',style: GoogleFonts.nunitoSans(
+                        color: Colors.black,
+                        fontWeight: FontWeight.w600
+                      ),),
+                    ),
+                  ),
+                ),
+              ):Container(),
+              !widget.isdelivered? const SizedBox(
+                height: 20,
+              ):Container(),
+              !widget.isdelivered? Center(
+                child: Container(
+                  width: MediaQuery.sizeOf(context).width-5,
+                  height: 50,
+                  decoration:  BoxDecoration(
+                      color: Colors.white,
+                      border: Border.all(
+                          color: Colors.black,
+                          width: 0.5
+                      )
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      InkWell(
+                          onTap: (){},
+                          child: Text('Return Item',style: GoogleFonts.nunitoSans(
+                              color: Colors.black,
+                              fontWeight: FontWeight.w600
+                          ),),
+                        ),
+                      SizedBox(
+                          height: 50,
+                          child: Container(
+                            width: 0.5,
+                            decoration: const BoxDecoration(
+                              color: Colors.black
+                            ),
+                          )),
+                      InkWell(
+                        onTap: (){},
+                        child: Text('Cancel Item',style: GoogleFonts.nunitoSans(
+                            color: Colors.black,
+                            fontWeight: FontWeight.w600
+                        ),),
+                      ),
+                    ],
+                  )
+                ),
+              ):Container(),
               const SizedBox(
-                height: 10,
+                height: 20,
               ),
               widget.isdelivered
                   ? Padding(
