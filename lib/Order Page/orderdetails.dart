@@ -272,6 +272,8 @@ class _OrderDetailsState extends State<OrderDetails> {
                     children: [
                       Expanded(
                           child: Column(
+                            mainAxisAlignment:MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             widget.name,
@@ -315,6 +317,18 @@ class _OrderDetailsState extends State<OrderDetails> {
                   '₹${widget.price}',
                   style: GoogleFonts.nunitoSans(
                     fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              const SizedBox(
+                height: 5,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 25, right: 25),
+                child: Text(
+                  'Estimated delivery by $formattedorderDate',
+                  style: GoogleFonts.nunitoSans(
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ),

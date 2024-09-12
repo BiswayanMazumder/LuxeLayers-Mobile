@@ -292,14 +292,14 @@ class _HomePageState extends State<HomePage> {
       print(fetchedajname);
     }
   }
+
   Future<void> fetchslidesDocumentNames() async {
     try {
       // Access the Firestore instance
       FirebaseFirestore firestore = FirebaseFirestore.instance;
 
       // Fetch the collection
-      QuerySnapshot querySnapshot =
-      await firestore.collection('Slides').get();
+      QuerySnapshot querySnapshot = await firestore.collection('Slides').get();
 
       // Extract document IDs and add them to the list
       List<String> names = querySnapshot.docs.map((doc) => doc.id).toList();
@@ -316,8 +316,10 @@ class _HomePageState extends State<HomePage> {
       }
     }
     for (int i = 0; i < slidesdocumentNames.length; i++) {
-      final docsnap =
-      await _firestore.collection('Slides').doc(slidesdocumentNames[i]).get();
+      final docsnap = await _firestore
+          .collection('Slides')
+          .doc(slidesdocumentNames[i])
+          .get();
       if (docsnap.exists) {
         setState(() {
           fetchedslidesname.add(docsnap.data()?['name']);
@@ -332,6 +334,7 @@ class _HomePageState extends State<HomePage> {
       print(fetchedajname);
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -670,7 +673,7 @@ class _HomePageState extends State<HomePage> {
                         itemCount: alldocumentNames.length,
                         itemBuilder: (context, index) {
                           return InkWell(
-                            onTap: (){
+                            onTap: () {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -749,16 +752,21 @@ class _HomePageState extends State<HomePage> {
                                 itemCount: slidesdocumentNames.length,
                                 itemBuilder: (context, index) {
                                   return InkWell(
-                                    onTap: (){
+                                    onTap: () {
                                       Navigator.push(
                                           context,
                                           MaterialPageRoute(
-                                            builder: (context) => Product_Details(
-                                                name: fetchedslidesname[index],
-                                                isjordan: true,
-                                                isslides: false,
-                                                productid: slidesdocumentNames[index],
-                                                imageUrl: fetchedslidespic[index]),
+                                            builder: (context) =>
+                                                Product_Details(
+                                                    name: fetchedslidesname[
+                                                        index],
+                                                    isjordan: true,
+                                                    isslides: false,
+                                                    productid:
+                                                        slidesdocumentNames[
+                                                            index],
+                                                    imageUrl: fetchedslidespic[
+                                                        index]),
                                           ));
                                     },
                                     child: Card(
