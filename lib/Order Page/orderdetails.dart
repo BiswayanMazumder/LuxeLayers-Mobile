@@ -61,6 +61,10 @@ class _OrderDetailsState extends State<OrderDetails> {
 
   DateTime? deliverdate;
   String? formattedDate;
+  DateTime? shippingdate;
+  String? formattedshippingDate;
+  DateTime? outdeliverydate;
+  String? formattedoutdeliveryDate;
   DateTime? orderdate;
   String? formattedorderDate;
   Future<void> fetchorderdate() async {
@@ -78,7 +82,40 @@ class _OrderDetailsState extends State<OrderDetails> {
       print(formattedorderDate);
     }
   }
-
+  bool isshipped=false;
+  bool isoutdelivery=false;
+  Future<void> fetchshippingdate() async {
+    final docsnap =
+    await _firestore.collection('Order Details').doc(widget.orderid).get();
+    if (docsnap.exists) {
+      setState(() {
+        // deliverdate = (docsnap.data()?['Delivery Date'] as Timestamp).toDate();
+        shippingdate = (docsnap.data()?['shipped'] as Timestamp).toDate();
+        isshipped=docsnap.data()?['Shipped'];
+        // formattedDate = DateFormat('MMM dd').format(deliverdate!);
+        formattedshippingDate = DateFormat('MMM dd').format(shippingdate!);
+      });
+    }
+    if (kDebugMode) {
+      print(formattedshippingDate);
+    }
+  }
+  Future<void> fetchoutdeliverydate() async {
+    final docsnap =
+    await _firestore.collection('Order Details').doc(widget.orderid).get();
+    if (docsnap.exists) {
+      setState(() {
+        // deliverdate = (docsnap.data()?['Delivery Date'] as Timestamp).toDate();
+        outdeliverydate = (docsnap.data()?['Out_Delivery_Time'] as Timestamp).toDate();
+        isoutdelivery=docsnap.data()?['Out_Delivery'];
+        // formattedDate = DateFormat('MMM dd').format(deliverdate!);
+        formattedoutdeliveryDate = DateFormat('MMM dd').format(outdeliverydate!);
+      });
+    }
+    if (kDebugMode) {
+      print(formattedshippingDate);
+    }
+  }
   Future<void> fetchdeliverydate() async {
     final docsnap =
         await _firestore.collection('Order Details').doc(widget.orderid).get();
@@ -150,6 +187,8 @@ class _OrderDetailsState extends State<OrderDetails> {
   void initState() {
     super.initState();
     _fetchData();
+    fetchshippingdate();
+    fetchoutdeliverydate();
   }
   @override
   Widget build(BuildContext context) {
@@ -373,8 +412,8 @@ class _OrderDetailsState extends State<OrderDetails> {
                           child: Container(
                             width: 3,
                             decoration: BoxDecoration(
-                              color: widget.isdelivered ? Colors.green : null,
-                              gradient: widget.isdelivered
+                              color: isshipped ? Colors.green : null,
+                              gradient: isshipped
                                   ? null
                                   : const LinearGradient(
                                       colors: [Colors.green, Colors.red],
@@ -389,7 +428,95 @@ class _OrderDetailsState extends State<OrderDetails> {
                         CircleAvatar(
                           radius: 15,
                           backgroundColor:
-                              widget.isdelivered ? Colors.green : Colors.red,
+                          isshipped ? Colors.green : Colors.red,
+                          child: Icon(
+                            isshipped ? Icons.check : Icons.close,
+                            color: Colors.white,
+                          ),
+                        ),
+                        isshipped
+                            ? Text(
+                                '  Order shipped on $formattedshippingDate',
+                                style: GoogleFonts.nunitoSans(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w600),
+                              )
+                            : Text(
+                                '  Expected to ship at the earliest',
+                                style: GoogleFonts.nunitoSans(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w600),
+                              )
+                      ],
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 13),
+                      child: SizedBox(
+                          height: 80,
+                          child: Container(
+                            width: 3,
+                            decoration: BoxDecoration(
+                              color: widget.isdelivered ? Colors.green : null,
+                              gradient: widget.isdelivered
+                                  ? null
+                                  : const LinearGradient(
+                                colors: [Colors.green, Colors.red],
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                              ),
+                            ),
+                          )),
+                    ),
+                    Row(
+                      children: [
+                        CircleAvatar(
+                          radius: 15,
+                          backgroundColor:
+                          isoutdelivery ? Colors.green : Colors.red,
+                          child: Icon(
+                            isoutdelivery ? Icons.check : Icons.close,
+                            color: Colors.white,
+                          ),
+                        ),
+                        isoutdelivery
+                            ? Text(
+                          '  Order out for delivery on $formattedoutdeliveryDate',
+                          style: GoogleFonts.nunitoSans(
+                              color: Colors.black,
+                              fontWeight: FontWeight.w600),
+                        )
+                            : Text(
+                          '  Item not yet out of delivery',
+                          style: GoogleFonts.nunitoSans(
+                              color: Colors.black,
+                              fontWeight: FontWeight.w600),
+                        )
+                      ],
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 13),
+                      child: SizedBox(
+                          height: 80,
+                          child: Container(
+                            width: 3,
+                            decoration: BoxDecoration(
+                              color: widget.isdelivered ? Colors.green : null,
+                              gradient: widget.isdelivered
+                                  ? null
+                                  : const LinearGradient(
+                                colors: [Colors.green, Colors.red],
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                              ),
+                            ),
+                          )),
+                    ),
+                    Row(
+                      children: [
+                        CircleAvatar(
+                          radius: 15,
+                          backgroundColor:
+                          widget.isdelivered ? Colors.green : Colors.red,
                           child: Icon(
                             widget.isdelivered ? Icons.check : Icons.close,
                             color: Colors.white,
@@ -397,19 +524,19 @@ class _OrderDetailsState extends State<OrderDetails> {
                         ),
                         widget.isdelivered
                             ? Text(
-                                '  Order confirmed on $formattedDate',
-                                style: GoogleFonts.nunitoSans(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w600),
-                              )
+                          '  Order confirmed on $formattedDate',
+                          style: GoogleFonts.nunitoSans(
+                              color: Colors.black,
+                              fontWeight: FontWeight.w600),
+                        )
                             : Text(
-                                '  Order yet to be delivered',
-                                style: GoogleFonts.nunitoSans(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w600),
-                              )
+                          '  Order yet to be delivered',
+                          style: GoogleFonts.nunitoSans(
+                              color: Colors.black,
+                              fontWeight: FontWeight.w600),
+                        )
                       ],
-                    )
+                    ),
                   ],
                 ),
               ),
