@@ -1,7 +1,7 @@
 **Brief for Luxelayers - Online Sneaker Buying App**
 
 **Overview:**
-Luxelayers is a cutting-edge online platform designed to streamline the sneaker buying experience for enthusiasts and collectors alike. Our app provides a seamless and engaging way to browse, purchase, and manage high-end and limited-edition sneakers from a curated selection.
+Luxelayers is an cutting-edge online platform designed to streamline the sneaker buying experience for enthusiasts and collectors alike. Our app provides a seamless and engaging way to browse, purchase, and manage high-end and limited-edition sneakers from a curated selection.
 
 **Objective:**
 To offer a premium and user-friendly online experience for sneaker buyers, featuring an extensive range of exclusive and high-quality sneakers, while incorporating advanced features for personalized shopping and efficient transactions.
